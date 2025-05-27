@@ -150,7 +150,7 @@ void mostrarMenuPrincipal() {
     cout << "\t[7]. Cargar procesos desde archivo\n";
     cout << "\t[8]. Cola de procesos\n"; //una opcion del menú para las colas (Luisana)
 
-    cout << "\t[0]. Salir\n";
+    cout << "\t[0]. Salir\n"; //agregar menu de salida (Luisana)
 
 }
 
@@ -247,13 +247,13 @@ void SubMenuCola(GestorProceso& gestor, queue<Proceso>& colaProcesos){ //(Luisan
 
 int main() {
     setlocale(LC_CTYPE, "Spanish");
-    queue<Proceso> colaProcesos; //para llamar al submenú de cola
+    queue<Proceso> colaProcesos; //para llamar al submenú de cola (Luisana)
     GestorProceso gestor;
     int opcion;
 
     do {
         mostrarMenuPrincipal();
-        cout << "\n\tSeleccione una opcion del menu: ";
+        cout << "\n\tSeleccione una opcion del menu: "; //(Luisana)
         cin >> opcion;
         cin.ignore();
 
