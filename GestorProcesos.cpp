@@ -3,9 +3,9 @@
 #include <string>
 #include <queue> //para las colas (Luisana)
 #include <ctime> //para el tiempo y poder ordenar del mas antiguo al mas reciente, tipo historal (Luisana)
-#include <limits> //para validar el número entero
+#include <limits> //para validar el número entero (Luisana)
 using namespace std;
-//implementando fecha para guardar el proceso con ella
+//implementando fecha para guardar el proceso con ella (Luisana)
 string obtenerFechaHoraActual(){
     time_t ahora = time(0);
     tm*tiempo = localtime(&ahora);
@@ -19,7 +19,7 @@ struct Proceso {
     string nombre;
     int prioridad;
     int memoria;
-    string fechaHora; //para utilizarlo en el submenú
+    string fechaHora; //para utilizarlo en el submenú (Luisana)
 };
 
 struct NodoLista {
@@ -154,7 +154,7 @@ void mostrarMenuPrincipal() {
 
 }
 
-//Creando una funcion para validar si es numero entero y que podremos usarlo en cualquier momento
+//Creando una funcion para validar si es numero entero y que podremos usarlo en cualquier momento (Luisana)
 int pedirEntero(const string& mensaje){
     int valor; //creamos una variable "valor" que será ENTERO
     while (true) {
@@ -169,7 +169,7 @@ int pedirEntero(const string& mensaje){
     }
 }
 
-void SubMenuCola(GestorProceso& gestor, queue<Proceso>& colaProcesos){
+void SubMenuCola(GestorProceso& gestor, queue<Proceso>& colaProcesos){ //(Luisana)
     setlocale(LC_CTYPE, "Spanish");
     int opColita;
     do{
@@ -267,9 +267,9 @@ int main() {
             cin >> p.prioridad;
             cout << "\tIngrese memoria (MB): ";
             cin >> p.memoria;
-            p.fechaHora = obtenerFechaHoraActual(); //para que también se guarde la fecha
+            p.fechaHora = obtenerFechaHoraActual(); //para que también se guarde la fecha(Luisana)
             gestor.insertarProceso(p);
-            colaProcesos.push(p); //para que se agregen los procesos ingresados a la cola
+            colaProcesos.push(p); //para que se agregen los procesos ingresados a la cola(Luisana)
             cout << "\tProceso insertado correctamente.\n";
         }
         else if (opcion == 2) {
@@ -323,7 +323,7 @@ int main() {
             cout << "\tProcesos cargados correctamente.\n";
         }
         else if (opcion == 8) {
-            SubMenuCola(gestor, colaProcesos); //llama a la funcion de cola
+            SubMenuCola(gestor, colaProcesos); //llama a la funcion de cola(Luisana)
         }
         //para salir del programa
         else if (opcion == 0) {
