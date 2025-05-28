@@ -146,11 +146,26 @@ public:
 };
 
 void asignarBloque() {
-
+    if (libre >= MAX_PILA) {
+            cout << "\tError: Pila llena" << "\n";
+        } else {
+            int idBloque;
+            cout << "\tID del bloque: ";
+            cin >> idBloque;
+            bloques[libre] = idBloque;
+            siguiente[libre] = tope;
+            tope = libre;
+            libre++;
+            cout << "\tBloque " << idBloque << " asignado correctamente.\n";
+        }
 }
 
 void verTope() {
-
+    if (tope == -1) {
+            cout << "\tError: Pila vacía\n";
+        } else {
+            cout << "\tBloque en tope: " << bloques[tope] << "\n";
+        }
 }
 
 void mostrarMenuPrincipal() {
