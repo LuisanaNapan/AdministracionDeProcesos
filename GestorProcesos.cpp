@@ -5,6 +5,13 @@
 #include <ctime> //para el tiempo y poder ordenar del mas antiguo al mas reciente, tipo historal (Luisana)
 #include <limits> //para validar el número entero (Luisana)
 using namespace std;
+//Pila
+#define MAX_PILA 100
+int bloques[MAX_PILA];       // almacena los bloques asignados
+int siguiente[MAX_PILA];     // enlaza cada posición con la anterior 
+int tope = -1;               // índice del tope de la pila
+int libre = 0;               // índice del siguiente espacio libre
+
 //implementando fecha para guardar el proceso con ella (Luisana)
 string obtenerFechaHoraActual(){
     time_t ahora = time(0);
@@ -138,6 +145,14 @@ public:
     }
 };
 
+void asignarBloque() {
+
+}
+
+void verTope() {
+
+}
+
 void mostrarMenuPrincipal() {
     cout << "\n\t===== SISTEMA DE GESTION DE PROCESOS =====\n";
     cout << "\t-------------------------------------------";
@@ -149,10 +164,10 @@ void mostrarMenuPrincipal() {
     cout << "\t[6]. Guardar procesos en archivo\n";
     cout << "\t[7]. Cargar procesos desde archivo\n";
     cout << "\t[8]. Cola de procesos\n"; //una opcion del menú para las colas (Luisana)
+    cout << "\t[9]. Pila de bloques\n";
 
-    cout << "\t[0]. Salir\n";
-
-}
+    cout << "\t[0]. Salir\n"; //agregar menu de salida (Luisana)
+};
 
 //Creando una funcion para validar si es numero entero y que podremos usarlo en cualquier momento (Luisana)
 int pedirEntero(const string& mensaje){
@@ -245,15 +260,35 @@ void SubMenuCola(GestorProceso& gestor, queue<Proceso>& colaProcesos){ //(Luisan
     } while (opColita != 4); //solo hasata 4 para que nos devuelva al menú
 }
 
+void SubMenuPila() {
+    int opcion;
+    do {
+        cout << "\n\t************ PILA DE BLOQUES ************\n";
+        cout << "\t-------------------------------------------";
+        cout << "\n\t[1]. Asignar bloque";
+        cout << "\n\t[2]. Ver tope";
+        cout << "\n\t[3]. Volver\n";
+        cout << "\n\tElija una opción: ";
+        opcion = pedirEntero("");  
+
+        switch(opcion) {
+            case 1: asignarBloque(); break;
+            case 2: verTope(); break;
+            case 3: cout << "\tVolviendo al menú principal...\n"; break;
+            default: cout << "\tOpción inválida\n";
+        }
+    } while (opcion != 3);
+}
+
 int main() {
     setlocale(LC_CTYPE, "Spanish");
-    queue<Proceso> colaProcesos; //para llamar al submenú de cola
+    queue<Proceso> colaProcesos; //para llamar al submenú de cola (Luisana)
     GestorProceso gestor;
     int opcion;
 
     do {
         mostrarMenuPrincipal();
-        cout << "\n\tSeleccione una opcion del menu: ";
+        cout << "\n\tSeleccione una opcion del menu: "; //(Luisana)
         cin >> opcion;
         cin.ignore();
 
@@ -324,6 +359,9 @@ int main() {
         }
         else if (opcion == 8) {
             SubMenuCola(gestor, colaProcesos); //llama a la funcion de cola(Luisana)
+        }
+        else if (opcion == 9) {
+            SubMenuPila(); // Llama a submenú de pila (Dayana y Yatzuri)
         }
         //para salir del programa
         else if (opcion == 0) {
