@@ -5,8 +5,8 @@
 #include <ctime> //para el tiempo y poder ordenar del mas antiguo al mas reciente, tipo historal (Luisana)
 #include <limits> //para validar el número entero (Luisana)
 using namespace std;
-//Pila
-#define MAX_PILA 100
+//para pila 
+#define MAX_PILA 100         //Tamaño máximo
 int bloques[MAX_PILA];       // almacena los bloques asignados
 int siguiente[MAX_PILA];     // enlaza cada posición con la anterior 
 int tope = -1;               // índice del tope de la pila
@@ -145,6 +145,7 @@ public:
     }
 };
 
+//Funciones para Pila - Dayana
 void asignarBloque() {
     if (libre >= MAX_PILA) {
             cout << "\tError: Pila llena" << "\n";
@@ -153,9 +154,9 @@ void asignarBloque() {
             cout << "\tID del bloque: ";
             cin >> idBloque;
             bloques[libre] = idBloque;
-            siguiente[libre] = tope;
-            tope = libre;
-            libre++;
+            siguiente[libre] = tope;    // enlaza con el bloque anterior
+            tope = libre;              // actualiza el tope al nuevo bloque
+            libre++;                  // actualiza índice del espacio libre
             cout << "\tBloque " << idBloque << " asignado correctamente.\n";
         }
 }
@@ -179,7 +180,7 @@ void mostrarMenuPrincipal() {
     cout << "\t[6]. Guardar procesos en archivo\n";
     cout << "\t[7]. Cargar procesos desde archivo\n";
     cout << "\t[8]. Cola de procesos\n"; //una opcion del menú para las colas (Luisana)
-    cout << "\t[9]. Pila de bloques\n";
+    cout << "\t[9]. Pila de bloques\n"; // opcion para pila (Dayana y Yatzuri)
 
     cout << "\t[0]. Salir\n"; //agregar menu de salida (Luisana)
 };
