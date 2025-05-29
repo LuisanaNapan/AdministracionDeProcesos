@@ -282,18 +282,22 @@ void SubMenuPila() {
         cout << "\n\t************ PILA DE BLOQUES ************\n";
         cout << "\t-------------------------------------------";
         cout << "\n\t[1]. Asignar bloque";
-        cout << "\n\t[2]. Ver tope";
-        cout << "\n\t[3]. Volver\n";
+        cout << "\n\t[2]. Liberar Bloque";
+        cout << "\n\t[3]. Ver tope";
+        cout << "\n\t[4]. Verificar Vacía";
+        cout << "\n\t[5]. Volver\n";
         cout << "\n\tElija una opción: ";
         opcion = pedirEntero("");  
 
         switch(opcion) {
             case 1: asignarBloque(); break;
-            case 2: verTope(); break;
-            case 3: cout << "\tVolviendo al menú principal...\n"; break;
+            case 2:
+            case 3: verTope(); break;
+            case 4: 
+            case 5: cout << "\tVolviendo al menú principal...\n"; break;
             default: cout << "\tOpción inválida\n";
         }
-    } while (opcion != 3);
+    } while (opcion != 5);
 }
 
 int main() {
