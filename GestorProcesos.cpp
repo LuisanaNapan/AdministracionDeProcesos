@@ -193,7 +193,7 @@ int pedirEntero(const string& mensaje){
         if(cin >> valor){ //si el valor que escribe el usuario es...
             return valor; //un numero entero, retorna "valor"
         } else{
-            cout << "\tERROR: Ingrese un número.\n"; // si el valor ingresado no es un numero ENTERO
+            cout << "\tERROR, Ingrese un numero.\n"; // si el valor ingresado no es un numero ENTERO
             cin.clear(); //limpia el bucle que se ejecutó con el error
             cin.ignore(numeric_limits<streamsize>::max(), '\n'); //ignora lo anterior y repite el proceso
         }
