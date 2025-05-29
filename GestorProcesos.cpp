@@ -169,6 +169,29 @@ void verTope() {
         }
 }
 
+//Funciones para Pila - Yatzuri
+void LiberarBloque() {
+    // Verifica si la pila está vacía
+    if (tope == -1) {
+        cout << "\tError: Pila vacía\n";
+    } else {
+        // Muestra el bloque que será liberado (el que está en el tope)
+        cout << "\tLiberando bloque: " << bloques[tope] << endl;
+        // Actualiza el tope apuntando al bloque anterior en la pila
+        tope = siguiente[tope]; // Retrocede al anterior bloque
+    }
+}
+
+void VerificarVacia() {
+    // Si el tope es -1, la pila no tiene elementos
+    if (tope == -1) {
+        cout << "\tVerdadero (vacía)\n";
+    } else {
+        // Si el tope no es -1, hay al menos un bloque en la pila
+        cout << "\tFalso (con datos)\n";
+    }
+}
+
 void mostrarMenuPrincipal() {
     cout << "\n\t===== SISTEMA DE GESTION DE PROCESOS =====\n";
     cout << "\t-------------------------------------------";
@@ -291,9 +314,9 @@ void SubMenuPila() {
 
         switch(opcion) {
             case 1: asignarBloque(); break;
-            case 2:
+            case 2: LiberarBloque(); break;
             case 3: verTope(); break;
-            case 4: 
+            case 4: VerificarVacia(); break;
             case 5: cout << "\tVolviendo al menú principal...\n"; break;
             default: cout << "\tOpción inválida\n";
         }
