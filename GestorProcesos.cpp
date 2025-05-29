@@ -1,8 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <queue> //para las colas (Luisana)
-#include <ctime> //para el tiempo y poder ordenar del mas antiguo al mas reciente, tipo historal (Luisana)
+#include <ctime> //para el tiempo (Luisana)
 #include <limits> //para validar el número entero (Luisana)
 using namespace std;
 //para pila 
@@ -41,6 +40,7 @@ struct NodoCola {
     NodoCola(Proceso p) : proceso(p), siguiente(NULL) {}
 };
 
+//cola
 class ColaProcesos {
 private:
     NodoCola* frente;
@@ -334,7 +334,7 @@ void SubMenuCola(GestorProceso& gestor, ColaProcesos& cola) {
                     gestor.eliminarProceso(p.id);
                     cout << "\tProceso con ID " << p.id << " ejecutado y eliminado.\n";
                 } else {
-                    cout << "\tLa cola está vacía.\n";
+                    cout << "\tLa cola está vacia.\n";
                 }
                 break;
             }
