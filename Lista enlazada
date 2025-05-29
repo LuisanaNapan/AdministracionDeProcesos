@@ -174,74 +174,81 @@ int main() {
         cin >> opcion;
         cin.ignore();
 
-        if (opcion == 1) {
-            Proceso p;
-            cout << "Ingrese ID: ";
-            cin >> p.id;
-            cout << "Ingrese nombre: ";
-            cin >> p.nombre;
-            cout << "Ingrese prioridad: ";
-            cin >> p.prioridad;
-            cout << "Ingrese memoria (MB): ";
-            cin >> p.memoria;
-            gestor.insertarProceso(p);
-            cout << "Proceso insertado correctamente.\n";
-        }
-        else if (opcion == 2) {
-            int id;
-            cout << "Ingrese ID del proceso a eliminar: ";
-            cin >> id;
-            if (gestor.eliminarProceso(id))
-                cout << "Proceso eliminado correctamente.\n";
-            else
-                cout << "No se encontro el proceso.\n";
-        }
-        else if (opcion == 3) {
-            int id;
-            cout << "Ingrese ID del proceso a buscar: ";
-            cin >> id;
-            Proceso* p = gestor.buscarProceso(id);
-            if (p)
-                cout << "ID: " << p->id
-                     << " | Nombre: " << p->nombre
-                     << " | Prioridad: " << p->prioridad
-                     << " | Memoria: " << p->memoria << " MB\n";
-            else
-                cout << "No se encontro el proceso.\n";
-        }
-        else if (opcion == 4) {
-            int id, nuevaPrioridad;
-            cout << "Ingrese ID del proceso a modificar: ";
-            cin >> id;
-            cout << "Ingrese nueva prioridad: ";
-            cin >> nuevaPrioridad;
-            if (gestor.modificarPrioridad(id, nuevaPrioridad))
-                cout << "Prioridad modificada correctamente.\n";
-            else
-                cout << "No se encontro el proceso.\n"; 
-        }
-        else if (opcion == 5) {
-            gestor.mostrarProcesos();
-        }
-        else if (opcion == 6) {
-            string nombreArchivo;
-            cout << "Ingrese nombre del archivo para guardar: ";
-            cin >> nombreArchivo;
-            gestor.guardarArchivo(nombreArchivo);
-            cout << "Procesos guardados correctamente.\n";
-        }
-        else if (opcion == 7) {
-            string nombreArchivo;
-            cout << "Ingrese nombre del archivo para cargar: ";
-            cin >> nombreArchivo;
-            gestor.cargarArchivo(nombreArchivo);
-            cout << "Procesos cargados correctamente.\n";
-        }
-        else if (opcion == 0) {
-            cout << "Saliendo del programa...\n";
-        }
-        else {
-            cout << "Opcion no valida. Intente de nuevo.\n";
+        switch(opcion) {
+            case 1: {
+                Proceso p;
+                cout << "Ingrese ID: ";
+                cin >> p.id;
+                cout << "Ingrese nombre: ";
+                cin >> p.nombre;
+                cout << "Ingrese prioridad: ";
+                cin >> p.prioridad;
+                cout << "Ingrese memoria (MB): ";
+                cin >> p.memoria;
+                gestor.insertarProceso(p);
+                cout << "Proceso insertado correctamente.\n";
+                break;
+            }
+            case 2: {
+                int id;
+                cout << "Ingrese ID del proceso a eliminar: ";
+                cin >> id;
+                if (gestor.eliminarProceso(id))
+                    cout << "Proceso eliminado correctamente.\n";
+                else
+                    cout << "No se encontro el proceso.\n";
+                break;
+            }
+            case 3: {
+                int id;
+                cout << "Ingrese ID del proceso a buscar: ";
+                cin >> id;
+                Proceso* p = gestor.buscarProceso(id);
+                if (p)
+                    cout << "ID: " << p->id
+                         << " | Nombre: " << p->nombre
+                         << " | Prioridad: " << p->prioridad
+                         << " | Memoria: " << p->memoria << " MB\n";
+                else
+                    cout << "No se encontro el proceso.\n";
+                break;
+            }
+            case 4: {
+                int id, nuevaPrioridad;
+                cout << "Ingrese ID del proceso a modificar: ";
+                cin >> id;
+                cout << "Ingrese nueva prioridad: ";
+                cin >> nuevaPrioridad;
+                if (gestor.modificarPrioridad(id, nuevaPrioridad))
+                    cout << "Prioridad modificada correctamente.\n";
+                else
+                    cout << "No se encontro el proceso.\n"; 
+                break;
+            }
+            case 5:
+                gestor.mostrarProcesos();
+                break;
+            case 6: {
+                string nombreArchivo;
+                cout << "Ingrese nombre del archivo para guardar: ";
+                cin >> nombreArchivo;
+                gestor.guardarArchivo(nombreArchivo);
+                cout << "Procesos guardados correctamente.\n";
+                break;
+            }
+            case 7: {
+                string nombreArchivo;
+                cout << "Ingrese nombre del archivo para cargar: ";
+                cin >> nombreArchivo;
+                gestor.cargarArchivo(nombreArchivo);
+                cout << "Procesos cargados correctamente.\n";
+                break;
+            }
+            case 0:
+                cout << "Saliendo del programa...\n";
+                break;
+            default:
+                cout << "Opcion no valida. Intente de nuevo.\n";
         }
 
     } while (opcion != 0);
