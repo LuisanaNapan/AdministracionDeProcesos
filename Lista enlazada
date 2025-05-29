@@ -1,0 +1,250 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <sstream>  // Para convertir string a int
+
+using namespace std;
+
+// Estructura que representa un proceso con sus atributos
+struct Proceso {
+    int id;             // Identificador único del proceso
+    string nombre;      // Nombre del proceso
+    int prioridad;      // Prioridad del proceso (menor valor = mayor prioridad)
+    int memoria;        // Memoria usada por el proceso en MB
+};
+
+// Nodo de la lista enlazada que contiene un proceso y un puntero al siguiente nodo
+struct NodoLista {
+    Proceso proceso;
+    NodoLista* siguiente;
+    NodoLista() : siguiente(NULL) {}  // Constructor que inicializa siguiente a NULL
+};
+
+class GestorProceso {
+private:
+    NodoLista* cabeza;  // Puntero al primer nodo de la lista enlazada
+
+    // Función privada que busca un nodo con un ID específico y devuelve su puntero
+    NodoLista* buscarNodo(int id) {
+        NodoLista* actual = cabeza;
+        while (actual) {  // Recorre la lista hasta encontrar el nodo o llegar al final
+            if (actual->proceso.id == id)
+                return actual;  // Nodo encontrado
+            actual = actual->siguiente;
+        }
+        return NULL;  // No encontrado
+    }
+
+    // Función auxiliar para convertir string a entero sin usar stoi (compatible con C++98)
+    int stringToInt(const string& str) {
+        stringstream ss(str);
+        int num;
+        ss >> num;
+        return num;
+    }
+
+public:
+    // Constructor que inicializa la lista vacía
+    GestorProceso() : cabeza(NULL) {}
+
+    // Inserta un nuevo proceso al inicio de la lista enlazada
+    void insertarProceso(Proceso p) {
+        NodoLista* nuevo = new NodoLista;
+        nuevo->proceso = p;         // Asigna los datos del proceso
+        nuevo->siguiente = cabeza;  // Apunta al nodo que era cabeza
+        cabeza = nuevo;             // Actualiza cabeza para que apunte al nuevo nodo
+    }
+
+    // Elimina un proceso por su ID, retorna true si se eliminó, false si no se encontró
+    bool eliminarProceso(int id) {
+        if (!cabeza) return false;  // Lista vacía, nada que eliminar
+        if (cabeza->proceso.id == id) {  // Si el proceso está en la cabeza
+            NodoLista* temp = cabeza;
+            cabeza = cabeza->siguiente;  // Mueve cabeza al siguiente nodo
+            delete temp;                 // Libera memoria del nodo eliminado
+            return true;
+        }
+        NodoLista* actual = cabeza;
+        while (actual->siguiente) {  // Recorre la lista buscando el nodo a eliminar
+            if (actual->siguiente->proceso.id == id) {
+                NodoLista* temp = actual->siguiente;
+                actual->siguiente = temp->siguiente;  // Salta el nodo eliminado
+                delete temp;
+                return true;
+            }
+            actual = actual->siguiente;
+        }
+        return false;  // No se encontró el proceso
+    }
+
+    // Busca un proceso por ID y retorna puntero a él o NULL si no existe
+    Proceso* buscarProceso(int id) {
+        NodoLista* nodo = buscarNodo(id);
+        return nodo ? &(nodo->proceso) : NULL;
+    }
+
+    // Modifica la prioridad de un proceso dado su ID, retorna true si se modificó
+    bool modificarPrioridad(int id, int nuevaPrioridad) {
+        NodoLista* nodo = buscarNodo(id);
+        if (nodo) {
+            nodo->proceso.prioridad = nuevaPrioridad;
+            return true;
+        }
+        return false;
+    }
+
+    // Muestra todos los procesos en la lista enlazada
+    void mostrarProcesos() {
+        NodoLista* actual = cabeza;
+        while (actual) {
+            cout << "ID: " << actual->proceso.id
+                 << " | Nombre: " << actual->proceso.nombre
+                 << " | Prioridad: " << actual->proceso.prioridad
+                 << " | Memoria: " << actual->proceso.memoria << " MB\n";
+            actual = actual->siguiente;
+        }
+    }
+
+    // Guarda todos los procesos en un archivo de texto en formato CSV
+    void guardarArchivo(const string& nombreArchivo) {
+        ofstream archivo(nombreArchivo.c_str());
+        NodoLista* actual = cabeza;
+        while (actual) {
+            archivo << actual->proceso.id << ","
+                    << actual->proceso.nombre << ","
+                    << actual->proceso.prioridad << ","
+                    << actual->proceso.memoria << "\n";
+            actual = actual->siguiente;
+        }
+        archivo.close();
+    }
+
+    // Carga procesos desde un archivo CSV y los inserta en la lista enlazada
+    void cargarArchivo(const string& nombreArchivo) {
+        ifstream archivo(nombreArchivo.c_str());
+        string linea;
+        while (getline(archivo, linea)) {  // Lee línea por línea
+            Proceso p;
+            size_t pos = 0;
+
+            // Extrae ID
+            pos = linea.find(',');
+            p.id = stringToInt(linea.substr(0, pos));
+            linea.erase(0, pos + 1);
+
+            // Extrae nombre
+            pos = linea.find(',');
+            p.nombre = linea.substr(0, pos);
+            linea.erase(0, pos + 1);
+
+            // Extrae prioridad
+            pos = linea.find(',');
+            p.prioridad = stringToInt(linea.substr(0, pos));
+            linea.erase(0, pos + 1);
+
+            // Extrae memoria
+            p.memoria = stringToInt(linea);
+
+            // Inserta el proceso en la lista
+            insertarProceso(p);
+        }
+        archivo.close();
+    }
+};
+
+// Muestra el menú principal al usuario
+void mostrarMenuPrincipal() {
+    cout << "\n===== SISTEMA DE GESTION DE PROCESOS =====\n";
+    cout << "1. Agregar proceso\n";
+    cout << "2. Eliminar proceso\n";
+    cout << "3. Buscar proceso por ID\n";
+    cout << "4. Modificar prioridad\n";
+    cout << "5. Mostrar todos los procesos\n";
+    cout << "6. Guardar procesos en archivo\n";
+    cout << "7. Cargar procesos desde archivo\n";
+    cout << "0. Salir\n";
+}
+
+int main() {
+    GestorProceso gestor;
+    int opcion;
+
+    do {
+        mostrarMenuPrincipal();
+        cin >> opcion;
+        cin.ignore();
+
+        if (opcion == 1) {
+            Proceso p;
+            cout << "Ingrese ID: ";
+            cin >> p.id;
+            cout << "Ingrese nombre: ";
+            cin >> p.nombre;
+            cout << "Ingrese prioridad: ";
+            cin >> p.prioridad;
+            cout << "Ingrese memoria (MB): ";
+            cin >> p.memoria;
+            gestor.insertarProceso(p);
+            cout << "Proceso insertado correctamente.\n";
+        }
+        else if (opcion == 2) {
+            int id;
+            cout << "Ingrese ID del proceso a eliminar: ";
+            cin >> id;
+            if (gestor.eliminarProceso(id))
+                cout << "Proceso eliminado correctamente.\n";
+            else
+                cout << "No se encontro el proceso.\n";
+        }
+        else if (opcion == 3) {
+            int id;
+            cout << "Ingrese ID del proceso a buscar: ";
+            cin >> id;
+            Proceso* p = gestor.buscarProceso(id);
+            if (p)
+                cout << "ID: " << p->id
+                     << " | Nombre: " << p->nombre
+                     << " | Prioridad: " << p->prioridad
+                     << " | Memoria: " << p->memoria << " MB\n";
+            else
+                cout << "No se encontro el proceso.\n";
+        }
+        else if (opcion == 4) {
+            int id, nuevaPrioridad;
+            cout << "Ingrese ID del proceso a modificar: ";
+            cin >> id;
+            cout << "Ingrese nueva prioridad: ";
+            cin >> nuevaPrioridad;
+            if (gestor.modificarPrioridad(id, nuevaPrioridad))
+                cout << "Prioridad modificada correctamente.\n";
+            else
+                cout << "No se encontro el proceso.\n"; 
+        }
+        else if (opcion == 5) {
+            gestor.mostrarProcesos();
+        }
+        else if (opcion == 6) {
+            string nombreArchivo;
+            cout << "Ingrese nombre del archivo para guardar: ";
+            cin >> nombreArchivo;
+            gestor.guardarArchivo(nombreArchivo);
+            cout << "Procesos guardados correctamente.\n";
+        }
+        else if (opcion == 7) {
+            string nombreArchivo;
+            cout << "Ingrese nombre del archivo para cargar: ";
+            cin >> nombreArchivo;
+            gestor.cargarArchivo(nombreArchivo);
+            cout << "Procesos cargados correctamente.\n";
+        }
+        else if (opcion == 0) {
+            cout << "Saliendo del programa...\n";
+        }
+        else {
+            cout << "Opcion no valida. Intente de nuevo.\n";
+        }
+
+    } while (opcion != 0);
+
+    return 0;
+}
