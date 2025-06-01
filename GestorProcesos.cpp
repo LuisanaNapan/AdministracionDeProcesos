@@ -26,82 +26,44 @@ struct NodoLista {
 struct NodoCola {
     Proceso proceso;
     NodoCola* siguiente;
-    NodoCola(Proceso p) : proceso(p), siguiente(NULL) {}
 };
+
+NodoCola* frente = NULL;
+NodoCola* final = NULL;
 
 //cola
-class ColaProcesos {
-private:
-    NodoCola* frente;
-    NodoCola* final;
-
-public:
-    ColaProcesos() : frente(NULL), final(NULL) {}
-
-    ~ColaProcesos() {
-        while (!vacia()) {
-            desencolar();
-        }
-    }
-
-    void encolar(Proceso p) {
-        NodoCola* nuevo = new NodoCola(p);
-        if (final) {
-            final->siguiente = nuevo;
-        } else {
-            frente = nuevo;
-        }
+void encolar(NodoCola*& frente, NodoCola*& final, Proceso p) {
+    NodoCola* nuevo = new NodoCola{p, NULL};
+    if (!final) {
+        frente = final = nuevo;
+    } else {
+        final->siguiente = nuevo;
         final = nuevo;
     }
+}
 
-    Proceso desencolar() {
-        if (vacia()) {
-            cout << "\tNo hay procesos en la cola.\n";
-            Proceso p;
-            p.id = -1; // usar un ID inválido para indicar que no hay proceso
-            return p;
-        }
-        NodoCola* temp = frente;
-        Proceso p = temp->proceso;
-        frente = frente->siguiente;
-        if (!frente) {
-            final = NULL;
-        }
-        delete temp;
-        return p;
-    }
+bool desencolar(NodoCola*& frente, NodoCola*& final) {
+    if (!frente) return false;
+    NodoCola* temp = frente;
+    frente = frente->siguiente;
+    if (!frente) final = NULL;
+    delete temp;
+    return true;
+}
 
-    Proceso verFrente() {
-        if (vacia()) {
-            cout << "\tNo hay procesos en la cola.\n";
-            Proceso p;
-            p.id = -1;
-            return p;
-        }
-        return frente->proceso;
+void mostrarCola(NodoCola* frente) {
+    if (!frente) {
+        cout << "\tCola vac�a.\n";
+        return;
     }
-
-    bool vacia() {
-        return frente == NULL;
+    NodoCola* actual = frente;
+    while (actual) {
+        Proceso p = actual->proceso;
+        cout << "\tID: " << p.id << " | Nombre: " << p.nombre
+             << " | Prioridad: " << p.prioridad << " | Memoria: " << p.memoria << "MB\n";
+        actual = actual->siguiente;
     }
-
-    void mostrarCola() {
-        if (vacia()) {
-            cout << "\tNo hay procesos en la cola.\n";
-            return;
-        }
-        NodoCola* actual = frente;
-        cout << "\tProcesos en la cola:\n";
-        while (actual) {
-            Proceso p = actual->proceso;
-            cout << "\t| ID: " << p.id
-                 << "| Nombre: " << p.nombre
-                 << "| Prioridad: " << p.prioridad
-                 << "| Memoria: " << p.memoria << "MB";
-            actual = actual->siguiente;
-        }
-    }
-};
+}
 
 class GestorProceso {
 private:
@@ -291,7 +253,7 @@ int pedirEntero(const string& mensaje){
     }
 }
 
-void SubMenuCola(GestorProceso& gestor, ColaProcesos& cola) {
+void SubMenuCola(GestorProceso& gestor) {
     setlocale(LC_CTYPE, "Spanish");
     int opColita;
     do {
@@ -315,24 +277,25 @@ void SubMenuCola(GestorProceso& gestor, ColaProcesos& cola) {
                 getline(cin, p.nombre);
                 p.prioridad = pedirEntero("\tIngrese prioridad   : ");
                 p.memoria = pedirEntero("\tIngrese memoria (MB): ");
-                
+
                 gestor.insertarProceso(p);
-                cola.encolar(p);
+                encolar(frente, final, p);
                 cout << "\t-- Proceso insertado correctamente. --\n";
                 break;
             }
             case 2: {
-                if (!cola.vacia()) {
-                    Proceso p = cola.desencolar();
+                if (frente) {
+                    Proceso p = frente->proceso;
+                    desencolar(frente, final);
                     gestor.eliminarProceso(p.id);
                     cout << "\tProceso con ID " << p.id << " ejecutado y eliminado.\n";
                 } else {
-                    cout << "\tLa cola está vacia.\n";
+                    cout << "\tLa cola est� vac�a.\n";
                 }
                 break;
             }
             case 3: {
-                cola.mostrarCola();
+                mostrarCola(frente);
                 break;
             }
             case 4:
@@ -342,7 +305,7 @@ void SubMenuCola(GestorProceso& gestor, ColaProcesos& cola) {
                 cout << "\tSaliendo del programa...\n";
                 exit(0);
             default:
-                cout << "\tERROR, Ingrese una opcion válida del submenu.\n";
+                cout << "\tERROR, Ingrese una opcion v�lida del submenu.\n";
         }
     } while (opColita != 4);
 }
@@ -373,7 +336,6 @@ void SubMenuPila() {
 
 int main() {
     setlocale(LC_CTYPE, "Spanish");
-    ColaProcesos colaProcesos; //para llamar al submenú de cola (Luisana)
     GestorProceso gestor;
     int opcion;
 
@@ -394,7 +356,7 @@ int main() {
             cout << "\tIngrese memoria (MB): ";
             cin >> p.memoria;
             gestor.insertarProceso(p);
-            colaProcesos.encolar(p); //para que se agregen los procesos ingresados a la cola(Luisana)
+            encolar(frente, final, p); //para que se agregen los procesos ingresados a la cola(Luisana)
             cout << "\tProceso insertado correctamente.\n";
         }
         else if (opcion == 2) {
@@ -448,7 +410,7 @@ int main() {
             cout << "\tProcesos cargados correctamente.\n";
         }
         else if (opcion == 8) {
-            SubMenuCola(gestor, colaProcesos); //llama a la funcion de cola(Luisana)
+            SubMenuCola(gestor); //llama a la funcion de cola(Luisana)
         }
         else if (opcion == 9) {
             SubMenuPila(); // Llama a submenú de pila (Dayana y Yatzuri)
