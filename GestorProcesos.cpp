@@ -1,7 +1,6 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <ctime> //para el tiempo (Luisana)
 #include <limits> //para validar el número entero (Luisana)
 using namespace std;
 //para pila 
@@ -11,21 +10,11 @@ int siguiente[MAX_PILA];     // enlaza cada posición con la anterior
 int tope = -1;               // índice del tope de la pila
 int libre = 0;               // índice del siguiente espacio libre
 
-//implementando fecha para guardar el proceso con ella (Luisana)
-string obtenerFechaHoraActual(){
-    time_t ahora = time(0);
-    tm*tiempo = localtime(&ahora);
-    char buffer[80];
-    strftime(buffer, 80, "%Y-%m-%d %H:%M:%S", tiempo);
-    return string(buffer);
-}
-
 struct Proceso {
     int id ;
     string nombre;
     int prioridad;
     int memoria;
-    string fechaHora; //para utilizarlo en el submenú (Luisana)
 };
 
 struct NodoLista {
@@ -67,7 +56,10 @@ public:
 
     Proceso desencolar() {
         if (vacia()) {
-            throw runtime_error("Cola vacía");
+            cout << "\tNo hay procesos en la cola.\n";
+            Proceso p;
+            p.id = -1; // usar un ID inválido para indicar que no hay proceso
+            return p;
         }
         NodoCola* temp = frente;
         Proceso p = temp->proceso;
@@ -81,7 +73,10 @@ public:
 
     Proceso verFrente() {
         if (vacia()) {
-            throw runtime_error("Cola vacía");
+            cout << "\tNo hay procesos en la cola.\n";
+            Proceso p;
+            p.id = -1;
+            return p;
         }
         return frente->proceso;
     }
@@ -102,8 +97,7 @@ public:
             cout << "\t| ID: " << p.id
                  << "| Nombre: " << p.nombre
                  << "| Prioridad: " << p.prioridad
-                 << "| Memoria: " << p.memoria << "MB"
-                 << "| Fecha: " << p.fechaHora << "\n";
+                 << "| Memoria: " << p.memoria << "MB";
             actual = actual->siguiente;
         }
     }
@@ -237,7 +231,7 @@ void asignarBloque() {
 
 void verTope() {
     if (tope == -1) {
-            cout << "\tError: Pila vacía\n";
+            cout << "\tError: Pila vacia\n";
         } else {
             cout << "\tBloque en tope: " << bloques[tope] << "\n";
         }
@@ -245,9 +239,9 @@ void verTope() {
 
 //Funciones para Pila - Yatzuri
 void LiberarBloque() {
-    // Verifica si la pila está vacía
+    // Verifica si la pila esta vacia
     if (tope == -1) {
-        cout << "\tError: Pila vacía\n";
+        cout << "\tError: Pila vacia\n";
     } else {
         // Muestra el bloque que será liberado (el que está en el tope)
         cout << "\tLiberando bloque: " << bloques[tope] << endl;
@@ -321,8 +315,7 @@ void SubMenuCola(GestorProceso& gestor, ColaProcesos& cola) {
                 getline(cin, p.nombre);
                 p.prioridad = pedirEntero("\tIngrese prioridad   : ");
                 p.memoria = pedirEntero("\tIngrese memoria (MB): ");
-                p.fechaHora = obtenerFechaHoraActual();
-
+                
                 gestor.insertarProceso(p);
                 cola.encolar(p);
                 cout << "\t-- Proceso insertado correctamente. --\n";
@@ -400,7 +393,6 @@ int main() {
             cin >> p.prioridad;
             cout << "\tIngrese memoria (MB): ";
             cin >> p.memoria;
-            p.fechaHora = obtenerFechaHoraActual(); //para que también se guarde la fecha(Luisana)
             gestor.insertarProceso(p);
             colaProcesos.encolar(p); //para que se agregen los procesos ingresados a la cola(Luisana)
             cout << "\tProceso insertado correctamente.\n";
