@@ -128,14 +128,15 @@ public:
 
 void mostrarMenuPrincipal() {
     cout << "\n===== SISTEMA DE GESTION DE PROCESOS =====\n";
-    cout << "1. Agregar proceso\n";
-    cout << "2. Eliminar proceso\n";
-    cout << "3. Buscar proceso por ID\n";
-    cout << "4. Modificar prioridad\n";
-    cout << "5. Mostrar todos los procesos\n";
-    cout << "6. Guardar procesos en archivo\n";
-    cout << "7. Cargar procesos desde archivo\n";
-    cout << "0. Salir\n";
+    cout << "[1]. Agregar proceso\n";
+    cout << "[2]. Eliminar proceso\n";
+    cout << "[3]. Buscar proceso por ID\n";
+    cout << "[4]. Modificar prioridad\n";
+    cout << "[5]. Mostrar todos los procesos\n";
+    cout << "[6]. Guardar procesos en archivo\n";
+    cout << "[7]. Cargar procesos desde archivo\n";
+    cout << "[8]. Cola de procesos\n";
+    cout << "[0]. Salir\n";
     cout << "Seleccione una opción: ";
 }
 
