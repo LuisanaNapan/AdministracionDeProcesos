@@ -126,6 +126,64 @@ public:
     }
 };
 
+int pedirEntero(const string& mensaje) {
+    int valor;
+    while (true) {
+        cout << mensaje;
+        if (cin >> valor) {
+            break;
+        } else {
+            cout << "\tERROR, debe ingresar un número entero.\n";
+            cin.clear();
+        }
+    }
+    return valor;
+}
+
+struct NodoCola {
+    Proceso proceso;
+    NodoCola* siguiente;
+};
+
+NodoCola* frente = NULL;
+NodoCola* final = NULL;
+
+void encolar(NodoCola*& frente, NodoCola*& final, Proceso p) {
+    NodoCola* nuevo = new NodoCola;
+	nuevo->proceso = p;
+	nuevo->siguiente = NULL;
+
+    if (!final) {
+        frente = final = nuevo;
+    } else {
+        final->siguiente = nuevo;
+        final = nuevo;
+    }
+}
+
+bool desencolar(NodoCola*& frente, NodoCola*& final) {
+    if (!frente) return false;
+    NodoCola* temp = frente;
+    frente = frente->siguiente;
+    if (!frente) final = NULL;
+    delete temp;
+    return true;
+}
+
+void mostrarCola(NodoCola* frente) {
+    if (!frente) {
+        cout << "\tCola vac?a.\n";
+        return;
+    }
+    NodoCola* actual = frente;
+    while (actual) {
+        Proceso p = actual->proceso;
+        cout << "\tID: " << p.id << " | Nombre: " << p.nombre
+             << " | Prioridad: " << p.prioridad << " | Memoria: " << p.memoria << "MB\n";
+        actual = actual->siguiente;
+    }
+}
+
 void mostrarMenuPrincipal() {
     cout << "\n===== SISTEMA DE GESTION DE PROCESOS =====\n";
     cout << "[1]. Agregar proceso\n";
@@ -138,6 +196,63 @@ void mostrarMenuPrincipal() {
     cout << "[8]. Cola de procesos\n";
     cout << "[0]. Salir\n";
     cout << "Seleccione una opción: ";
+}
+
+void SubMenuCola(GestorProceso& gestor) {
+    setlocale(LC_CTYPE, "Spanish");
+    int opColita;
+    do {
+        cout << "\n\t************ COLA DE PROCESOS ************\n";
+        cout << "\t-------------------------------------------";
+        cout << "\n\t[1]. Ingresar nuevo proceso\n";
+        cout << "\t[2]. Ejecutar proceso (desencolar)\n";
+        cout << "\t[3]. Ver cola de procesos\n";
+        cout << "\t[4]. Volver\n";
+        cout << "\t[5]. Salir\n";
+        cout << "\n\tElija una opcion: ";
+        cin >> opColita;
+        cin.ignore();
+
+        switch (opColita) {
+            case 1: {
+                Proceso p;
+                p.id = pedirEntero("\n\tIngrese ID\t    : ");
+                cout << "\tIngrese nombre\t    : ";
+                cin.ignore();
+                getline(cin, p.nombre);
+                p.prioridad = pedirEntero("\tIngrese prioridad   : ");
+                p.memoria = pedirEntero("\tIngrese memoria (MB): ");
+
+                gestor.insertarProceso(p);
+                encolar(frente, final, p);
+                cout << "\t-- Proceso insertado correctamente. --\n";
+                break;
+            }
+            case 2: {
+                if (frente) {
+                    Proceso p = frente->proceso;
+                    desencolar(frente, final);
+                    gestor.eliminarProceso(p.id);
+                    cout << "\tProceso con ID " << p.id << " ejecutado y eliminado.\n";
+                } else {
+                    cout << "\tLa cola est? vac?a.\n";
+                }
+                break;
+            }
+            case 3: {
+                mostrarCola(frente);
+                break;
+            }
+            case 4:
+                cout << "\tEstas volviendo al menu principal...\n";
+                break;
+            case 5:
+                cout << "\tSaliendo del programa...\n";
+                exit(0);
+            default:
+                cout << "\tERROR, Ingrese una opcion v?lida del submenu.\n";
+        }
+    } while (opColita != 4);
 }
 
 int main() {
@@ -161,6 +276,7 @@ int main() {
                 cout << "Ingrese memoria (MB): ";
                 cin >> p.memoria;
                 gestor.insertarProceso(p);
+                encolar(frente, final, p);
                 cout << "Proceso insertado correctamente.\n";
                 break;
             }
@@ -220,6 +336,8 @@ int main() {
                 cout << "Procesos cargados correctamente.\n";
                 break;
             }
+            case 8: {
+                SubMenuCola(gestor);
             case 0: {
                 cout << "Saliendo del programa...\n";
                 break;
