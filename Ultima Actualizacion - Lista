@@ -2,8 +2,13 @@
 #include <fstream>
 #include <string>
 #include <cstdlib> // Para NULL
-
 using namespace std;
+//para pila 
+#define MAX_PILA 100         //Tamaño máximo
+int bloques[MAX_PILA];       // almacena los bloques asignados
+int siguiente[MAX_PILA];     // enlaza cada posición con la anterior 
+int tope = -1;               // índice del tope de la pila
+int libre = 0;               // índice del siguiente espacio libre
 
 struct Proceso {
     int id;
@@ -48,52 +53,59 @@ public:
     ~GestorProceso() {
         liberarLista();
     }
-	//Función para agregar un nuevo proceso a la lista ligada
-	Proceso agregarProceso() {
+	//Función para agregar un nuevo proceso a la lista ligada 
+	Proceso agregarProceso() { //Dayana
 	    Proceso nuevo;
-	    do{
-			cout<<"\n\tIngrese ID del proceso\t\t: ";
-		    	cin>>nuevo.id;
-			if (nuevo.id<100||nuevo.id>999){
-			    cout<<"\tERROR, el ID debe ser un número de 3 dígitos (100 a 999)\n";
-			}
-	    } while (nuevo.id<100||nuevo.id>999);
-	    
-	    cout<<"\tIngrese nombre del proceso\t: ";
-	    cin>>nuevo.nombre;  
-
-	    do{
-			cout<<"\tIngrese prioridad (1 a 5)\t: ";
-		        cin>>nuevo.prioridad;
-			if (nuevo.prioridad<1||nuevo.prioridad>5){
-			    cout<<"\tERROR, ingrese una prioridad válida (entre 1 y 5)\n";
-			}
-	    } while (nuevo.prioridad<1||nuevo.prioridad>5);
-
+	    //Validar que el ID sea un número de 3 dígitos entre 100 y 999
 	    do {
-		    cout<<"\tIngrese memoria (en MB)\t\t: ";
-		    cin>>nuevo.memoria;
-		    if (nuevo.memoria<=0) {
-		        cout<<"\tERROR, la memoria debe ser un número positivo.\n";
-		    }
-		} while (nuevo.memoria<=0);
+	        cout << "\n\tIngrese ID del proceso\t\t: ";
+	        cin >> nuevo.id;
+	        if (nuevo.id < 100 || nuevo.id > 999) {
+	            cout << "\tERROR, el ID debe ser un número de 3 dígitos (100 a 999)\n";
+	        }
+	    } while (nuevo.id < 100 || nuevo.id > 999);
 	
+	    //Solicitar nombre del proceso
+	    cout << "\tIngrese nombre del proceso\t: ";
+	    cin >> nuevo.nombre;
+	
+	    //Validar que la prioridad esté entre 1 y 5
+	    do {
+	        cout << "\tIngrese prioridad (1 a 5)\t: ";
+	        cin >> nuevo.prioridad;
+	        if (nuevo.prioridad < 1 || nuevo.prioridad > 5) {
+	            cout << "\tERROR, ingrese una prioridad válida (entre 1 y 5)\n";
+	        }
+	    } while (nuevo.prioridad < 1 || nuevo.prioridad > 5);
+	
+	    //Validar que la memoria sea un número positivo
+	    do {
+	        cout << "\tIngrese memoria (en MB)\t\t: ";
+	        cin >> nuevo.memoria;
+	        if (nuevo.memoria <= 0) {
+	            cout << "\tERROR, la memoria debe ser un número positivo.\n";
+	        }
+	    } while (nuevo.memoria <= 0);
+	
+	    //Crear un nuevo nodo para la lista ligada y asignar el proceso
 	    NodoLista* nuevoNodo = new NodoLista();
 	    nuevoNodo->proceso = nuevo;
 	    nuevoNodo->siguiente = NULL;
 	
+	    //Insertar el nodo al final de la lista
 	    if (cabeza == NULL) {
-	        cabeza = nuevoNodo;
+	        cabeza = nuevoNodo;  //Si la lista está vacía, el nuevo nodo es la cabeza
 	    } else {
 	        NodoLista* actual = cabeza;
+	        // Recorrer hasta el último nodo
 	        while (actual->siguiente != NULL) {
 	            actual = actual->siguiente;
 	        }
-	        actual->siguiente = nuevoNodo;
+	        actual->siguiente = nuevoNodo;  //Enlazar el nuevo nodo al final
 	    }
 	
 	    cout << "\tProceso agregado exitosamente.\n";
-	    return nuevo;
+	    return nuevo;  //Devolver el proceso agregado
 	}
 
     bool eliminarProceso(int id) {
@@ -244,6 +256,57 @@ void mostrarCola(NodoCola* frente) {
     }
 }
 
+// Funciones para Pila - Dayana
+void asignarBloque() {
+    //Verifica si la pila ha alcanzado su capacidad máxima
+    if (libre >= MAX_PILA) {
+        cout << "\tError: Pila llena\n";
+    } else {
+        int idBloque;
+        cout << "\tID del bloque: ";
+        cin >> idBloque;
+
+        bloques[libre] = idBloque;     // Guarda el ID en el arreglo de bloques
+        siguiente[libre] = tope;       // Enlaza con el bloque anterior (el actual tope)
+        tope = libre;                  // Actualiza el tope al nuevo bloque agregado
+        libre++;                       // Avanza al siguiente espacio libre
+
+        cout << "\tBloque " << idBloque << " asignado correctamente.\n";
+    }
+}
+
+void verTope() {
+    // Verifica si la pila está vacía antes de mostrar el tope
+    if (tope == -1) {
+        cout << "\tError: Pila vacía\n";
+    } else {
+        cout << "\tBloque en tope: " << bloques[tope] << "\n";
+    }
+}
+
+// Funciones para Pila - Yatzuri
+void LiberarBloque() {
+    // Verifica si la pila está vacía antes de liberar
+    if (tope == -1) {
+        cout << "\tError: Pila vacía\n";
+    } else {
+        // Muestra el bloque que será liberado (actual tope)
+        cout << "\tLiberando bloque: " << bloques[tope] << "\n";
+
+        // Actualiza el tope al anterior bloque (retrocede en la pila)
+        tope = siguiente[tope];
+    }
+}
+
+void VerificarVacia() {
+    // Verifica si la pila está vacía (tope == -1)
+    if (tope == -1) {
+        cout << "\tVerdadero (vacía)\n";
+    } else {
+        cout << "\tFalso (con datos)\n";
+    }
+}
+
 //Funcion de SubMenu cola cuando el usuario ingrese la opcion 8
 void SubMenuCola(GestorProceso& gestor) {
     setlocale(LC_CTYPE, "Spanish");
@@ -263,10 +326,11 @@ void SubMenuCola(GestorProceso& gestor) {
 
         switch (opColita) {
 			case 1: {
-			    Proceso p = gestor.agregarProceso();
-			    encolar(frente, final, p);
-			    cout << "\tProceso insertado correctamente.\n";
-			    break;
+		        //Se crea un nuevo proceso usando el gestor
+		        Proceso p = gestor.agregarProceso();
+		        //Se encola el proceso recién creado en la cola
+		        encolar(frente, final, p);
+		        break;
 			}
             case 2: {
                 if (frente) {
@@ -295,17 +359,50 @@ void SubMenuCola(GestorProceso& gestor) {
     } while (opColita != 4);
 }
 
+void SubMenuPila() {
+    int opcion;
+    do {
+        cout << "\n\t************ PILA DE BLOQUES ************\n";
+        cout << "\t-------------------------------------------";
+        cout << "\n\t[1]. Asignar bloque";
+        cout << "\n\t[2]. Liberar Bloque";
+        cout << "\n\t[3]. Ver tope";
+        cout << "\n\t[4]. Verificar Vacía";
+        cout << "\n\t[5]. Volver\n";
+        cout << "\n\tElija una opción: "; 
+        cin>>opcion;
+
+        switch(opcion) {
+            case 1: 
+				asignarBloque(); 
+			break;
+            case 2: 
+				LiberarBloque(); 
+			break;
+            case 3: 
+				verTope(); 
+			break;
+            case 4: 
+				VerificarVacia(); 
+			break;
+            case 5: cout << "\tVolviendo al menú principal...\n"; break;
+            default: cout << "\tOpción inválida\n";
+        }
+    } while (opcion != 5);
+}
+
 void mostrarMenuPrincipal() {
     cout << "\n\t===== SISTEMA DE GESTION DE PROCESOS =====\n";
-    cout << "\t1. Agregar proceso\n";
-    cout << "\t2. Eliminar proceso\n";
-    cout << "\t3. Buscar proceso por ID\n";
-    cout << "\t4. Modificar prioridad\n";
-    cout << "\t5. Mostrar todos los procesos\n";
-    cout << "\t6. Guardar procesos en archivo\n";
-    cout << "\t7. Cargar procesos desde archivo\n";
-    cout << "\t8. Cola de procesos\n"; //agregamos la opción 8 en el menú principal para que sea visible por el usuario.
-    cout << "\t0. Salir\n";
+    cout << "\t[1]. Agregar proceso\n";
+    cout << "\t[2]. Eliminar proceso\n";
+    cout << "\t[3]. Buscar proceso por ID\n";
+    cout << "\t[4]. Modificar prioridad\n";
+    cout << "\t[5]. Mostrar todos los procesos\n";
+    cout << "\t[6]. Guardar procesos en archivo\n";
+    cout << "\t[7]. Cargar procesos desde archivo\n";
+    cout << "\t[8]. Cola de procesos\n"; //agregamos la opción 8 en el menú principal para que sea visible por el usuario.
+    cout << "\t[9]. Pila de bloques\n"; // opcion para pila (Dayana y Yatzuri)
+    cout << "\t[0]. Salir\n";
     cout << "\tSeleccione una opción: ";
 }
 
@@ -319,10 +416,10 @@ int main() {
         cin.ignore();
 
         switch (opcion) {
-	    case 1: {
-	        Proceso p = gestor.agregarProceso();
-		break;
-	    }
+		    case 1: {
+		        gestor.agregarProceso();
+			break;
+		    }
             case 2: {
                 int id;
                 cout << "\tIngrese ID del proceso a eliminar: ";
@@ -385,7 +482,11 @@ int main() {
             }
             case 8: {
                 SubMenuCola(gestor); //llamamos a la funcion de submenuCola cuando el usuario ingrese la opción 8 del menú principal
-		break;
+			break;
+            }
+            case 9: {
+                SubMenuPila(); 
+			break;
             }
             case 0:
                 cout << "\tSaliendo del programa...\n";
@@ -393,8 +494,6 @@ int main() {
             default:
                 cout << "\tOpción no válida. Intente de nuevo.\n";
         }
-
     } while (opcion != 0);
-
     return 0;
 }
