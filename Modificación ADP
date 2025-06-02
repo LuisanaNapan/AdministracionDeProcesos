@@ -78,7 +78,7 @@ public:
     void mostrarProcesos() {
         NodoLista* actual = cabeza;
         while (actual) {
-            cout << "ID: " << actual->proceso.id
+            cout << "| ID: " << actual->proceso.id
                  << " | Nombre: " << actual->proceso.nombre
                  << " | Prioridad: " << actual->proceso.prioridad
                  << " | Memoria: " << actual->proceso.memoria << " MB\n";
@@ -178,7 +178,7 @@ void mostrarCola(NodoCola* frente) {
     NodoCola* actual = frente;
     while (actual) {
         Proceso p = actual->proceso;
-        cout << "\tID: " << p.id << " | Nombre: " << p.nombre
+        cout << "\t| ID: " << p.id << " | Nombre: " << p.nombre
              << " | Prioridad: " << p.prioridad << " | Memoria: " << p.memoria << "MB\n";
         actual = actual->siguiente;
     }
@@ -195,7 +195,7 @@ void mostrarMenuPrincipal() {
     cout << "[7]. Cargar procesos desde archivo\n";
     cout << "[8]. Cola de procesos\n";
     cout << "[0]. Salir\n";
-    cout << "Seleccione una opción: ";
+    cout << "\nSeleccione una opcion: ";
 }
 
 void SubMenuCola(GestorProceso& gestor) {
