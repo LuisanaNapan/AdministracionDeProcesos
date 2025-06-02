@@ -126,20 +126,6 @@ public:
     }
 };
 
-int pedirEntero(const string& mensaje) {
-    int valor;
-    while (true) {
-        cout << mensaje;
-        if (cin >> valor) {
-            break;
-        } else {
-            cout << "\tERROR, debe ingresar un número entero.\n";
-            cin.clear();
-        }
-    }
-    return valor;
-}
-
 struct NodoCola {
     Proceso proceso;
     NodoCola* siguiente;
@@ -216,12 +202,15 @@ void SubMenuCola(GestorProceso& gestor) {
         switch (opColita) {
             case 1: {
                 Proceso p;
-                p.id = pedirEntero("\n\tIngrese ID\t    : ");
+                cout << "\n\tIngrese ID\t    : ";
+                cin >> p.id;
                 cout << "\tIngrese nombre\t    : ";
                 cin.ignore();
                 getline(cin, p.nombre);
-                p.prioridad = pedirEntero("\tIngrese prioridad   : ");
-                p.memoria = pedirEntero("\tIngrese memoria (MB): ");
+                cout << "\tIngrese prioridad   : ";
+                cin >> p.prioridad;
+                cout << "\tIngrese memoria (MB): ";
+                cin >> p.memoria;
 
                 gestor.insertarProceso(p);
                 encolar(frente, final, p);
