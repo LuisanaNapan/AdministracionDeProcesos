@@ -48,17 +48,35 @@ public:
     ~GestorProceso() {
         liberarLista();
     }
-
+	//Función para agregar un nuevo proceso a la lista ligada
 	Proceso agregarProceso() {
 	    Proceso nuevo;
-	    cout << "\n\tIngrese ID del proceso\t\t: ";
-	    cin >> nuevo.id;
-	    cout << "\tIngrese nombre del proceso\t: ";
-	    cin >> nuevo.nombre;  
-	    cout << "\tIngrese prioridad\t\t: ";
-	    cin >> nuevo.prioridad;
-	    cout << "\tIngrese memoria (en MB)\t: ";
-	    cin >> nuevo.memoria;
+	    do{
+			cout<<"\n\tIngrese ID del proceso\t\t: ";
+		    	cin>>nuevo.id;
+			if (nuevo.id<100||nuevo.id>999){
+			    cout<<"\tERROR, el ID debe ser un número de 3 dígitos (100 a 999)\n";
+			}
+	    } while (nuevo.id<100||nuevo.id>999);
+	    
+	    cout<<"\tIngrese nombre del proceso\t: ";
+	    cin>>nuevo.nombre;  
+
+	    do{
+			cout<<"\tIngrese prioridad (1 a 5)\t: ";
+		        cin>>nuevo.prioridad;
+			if (nuevo.prioridad<1||nuevo.prioridad>5){
+			    cout<<"\tERROR, ingrese una prioridad válida (entre 1 y 5)\n";
+			}
+	    } while (nuevo.prioridad<1||nuevo.prioridad>5);
+
+	    do {
+		    cout<<"\tIngrese memoria (en MB)\t\t: ";
+		    cin>>nuevo.memoria;
+		    if (nuevo.memoria<=0) {
+		        cout<<"\tERROR, la memoria debe ser un número positivo.\n";
+		    }
+		} while (nuevo.memoria<=0);
 	
 	    NodoLista* nuevoNodo = new NodoLista();
 	    nuevoNodo->proceso = nuevo;
@@ -301,11 +319,10 @@ int main() {
         cin.ignore();
 
         switch (opcion) {
-			case 1: {
-			    Proceso p = gestor.agregarProceso();
-			    // Si quieres, puedes hacer algo con p aquí
-			    break;
-			}
+	    case 1: {
+	        Proceso p = gestor.agregarProceso();
+		break;
+	    }
             case 2: {
                 int id;
                 cout << "\tIngrese ID del proceso a eliminar: ";
