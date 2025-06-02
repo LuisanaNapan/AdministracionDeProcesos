@@ -327,6 +327,7 @@ int main() {
             }
             case 8: {
                 SubMenuCola(gestor);
+		break;
 	    }
             case 0: {
                 cout << "Saliendo del programa...\n";
