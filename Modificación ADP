@@ -78,7 +78,7 @@ public:
     void mostrarProcesos() {
         NodoLista* actual = cabeza;
         while (actual) {
-            cout << "| ID: " << actual->proceso.id
+            cout << "\t| ID: " << actual->proceso.id
                  << " | Nombre: " << actual->proceso.nombre
                  << " | Prioridad: " << actual->proceso.prioridad
                  << " | Memoria: " << actual->proceso.memoria << " MB\n";
@@ -171,17 +171,17 @@ void mostrarCola(NodoCola* frente) {
 }
 
 void mostrarMenuPrincipal() {
-    cout << "\n===== SISTEMA DE GESTION DE PROCESOS =====\n";
-    cout << "[1]. Agregar proceso\n";
-    cout << "[2]. Eliminar proceso\n";
-    cout << "[3]. Buscar proceso por ID\n";
-    cout << "[4]. Modificar prioridad\n";
-    cout << "[5]. Mostrar todos los procesos\n";
-    cout << "[6]. Guardar procesos en archivo\n";
-    cout << "[7]. Cargar procesos desde archivo\n";
-    cout << "[8]. Cola de procesos\n";
-    cout << "[0]. Salir\n";
-    cout << "\nSeleccione una opcion: ";
+    cout << "\n\t===== SISTEMA DE GESTION DE PROCESOS =====\n";
+    cout << "\t[1]. Agregar proceso\n";
+    cout << "\t[2]. Eliminar proceso\n";
+    cout << "\t[3]. Buscar proceso por ID\n";
+    cout << "\t[4]. Modificar prioridad\n";
+    cout << "\t[5]. Mostrar todos los procesos\n";
+    cout << "\t[6]. Guardar procesos en archivo\n";
+    cout << "\t[7]. Cargar procesos desde archivo\n";
+    cout << "\t[8]. Cola de procesos\n";
+    cout << "\t[0]. Salir\n";
+    cout << "\n\tSeleccione una opcion: ";
 }
 
 void SubMenuCola(GestorProceso& gestor) {
