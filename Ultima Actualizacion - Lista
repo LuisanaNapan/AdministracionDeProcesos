@@ -180,14 +180,16 @@ public:
     }
 };
 
+//creamos una estructura llamada NodoCola
 struct NodoCola {
     Proceso proceso;
     NodoCola* siguiente;
 };
 
-NodoCola* frente = NULL;
-NodoCola* final = NULL;
+NodoCola* frente = NULL; //decimos que el frente de la cola
+NodoCola* final = NULL; //y el final de la cola están vacios
 
+//creamos una funcion encolar con los parametros y referencias que renombraremos dentro
 void encolar(NodoCola*& frente, NodoCola*& final, Proceso p) {
     NodoCola* nuevo = new NodoCola;
 	nuevo->proceso = p;
@@ -224,10 +226,12 @@ void mostrarCola(NodoCola* frente) {
     }
 }
 
+//Funcion de SubMenu cola cuando el usuario ingrese la opcion 8
 void SubMenuCola(GestorProceso& gestor) {
     setlocale(LC_CTYPE, "Spanish");
     int opColita;
     do {
+	//mostramos las opciones para el SubMenuCola
         cout << "\n\t************ COLA DE PROCESOS ************\n";
         cout << "\t-------------------------------------------";
         cout << "\n\t[1]. Ingresar nuevo proceso\n";
@@ -253,7 +257,7 @@ void SubMenuCola(GestorProceso& gestor) {
                     gestor.eliminarProceso(p.id);
                     cout << "\tProceso con ID " << p.id << " ejecutado y eliminado.\n";
                 } else {
-                    cout << "\tLa cola est? vac?a.\n";
+                    cout << "\tLa cola esta vacia.\n";
                 }
                 break;
             }
@@ -268,7 +272,7 @@ void SubMenuCola(GestorProceso& gestor) {
                 cout << "\tSaliendo del programa...\n";
                 exit(0);
             default:
-                cout << "\tERROR, Ingrese una opcion v?lida del submenu.\n";
+                cout << "\tERROR, Ingrese una opcion valida del submenu.\n";
         }
     } while (opColita != 4);
 }
@@ -282,7 +286,7 @@ void mostrarMenuPrincipal() {
     cout << "\t5. Mostrar todos los procesos\n";
     cout << "\t6. Guardar procesos en archivo\n";
     cout << "\t7. Cargar procesos desde archivo\n";
-    cout << "\t8. Cola de procesos\n";
+    cout << "\t8. Cola de procesos\n"; //agregamos la opción 8 en el menú principal para que sea visible por el usuario.
     cout << "\t0. Salir\n";
     cout << "\tSeleccione una opción: ";
 }
@@ -363,8 +367,8 @@ int main() {
                 break;
             }
             case 8: {
-                SubMenuCola(gestor);
-		        break;
+                SubMenuCola(gestor); //llamamos a la funcion de submenuCola cuando el usuario ingrese la opción 8 del menú principal
+		break;
             }
             case 0:
                 cout << "\tSaliendo del programa...\n";
