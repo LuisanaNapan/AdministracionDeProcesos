@@ -51,7 +51,7 @@ public:
 
     void insertarProceso(Proceso p) {
         if (buscarNodo(p.id)) {
-            cout << "Error: Ya existe un proceso con ID " << p.id << ". No se inserto.\n";
+            cout << "\tError: Ya existe un proceso con ID " << p.id << ". No se inserto.\n";
             return;
         }
         NodoLista* nuevo = new NodoLista;
@@ -97,12 +97,12 @@ public:
 
     void mostrarProcesos() {
         if (!cabeza) {
-            cout << "No hay procesos para mostrar.\n";
+            cout << "\tNo hay procesos para mostrar.\n";
             return;
         }
         NodoLista* actual = cabeza;
         while (actual) {
-            cout << "ID: " << actual->proceso.id
+            cout << "\t| ID: " << actual->proceso.id
                  << " | Nombre: " << actual->proceso.nombre
                  << " | Prioridad: " << actual->proceso.prioridad
                  << " | Memoria: " << actual->proceso.memoria << " MB\n";
@@ -130,7 +130,7 @@ public:
     void cargarArchivo(const string& nombreArchivo) {
         ifstream archivo(nombreArchivo.c_str());
         if (!archivo) {
-            cout << "Error al abrir el archivo para cargar.\n";
+            cout << "\tError al abrir el archivo para cargar.\n";
             return;
         }
         liberarLista();
@@ -162,17 +162,122 @@ public:
     }
 };
 
+struct NodoCola {
+    Proceso proceso;
+    NodoCola* siguiente;
+};
+
+NodoCola* frente = NULL;
+NodoCola* final = NULL;
+
+void encolar(NodoCola*& frente, NodoCola*& final, Proceso p) {
+    NodoCola* nuevo = new NodoCola;
+	nuevo->proceso = p;
+	nuevo->siguiente = NULL;
+
+    if (!final) {
+        frente = final = nuevo;
+    } else {
+        final->siguiente = nuevo;
+        final = nuevo;
+    }
+}
+
+bool desencolar(NodoCola*& frente, NodoCola*& final) {
+    if (!frente) return false;
+    NodoCola* temp = frente;
+    frente = frente->siguiente;
+    if (!frente) final = NULL;
+    delete temp;
+    return true;
+}
+
+void mostrarCola(NodoCola* frente) {
+    if (!frente) {
+        cout << "\tCola vac?a.\n";
+        return;
+    }
+    NodoCola* actual = frente;
+    while (actual) {
+        Proceso p = actual->proceso;
+        cout << "\t| ID: " << p.id << " | Nombre: " << p.nombre
+             << " | Prioridad: " << p.prioridad << " | Memoria: " << p.memoria << "MB\n";
+        actual = actual->siguiente;
+    }
+}
+
+void SubMenuCola(GestorProceso& gestor) {
+    setlocale(LC_CTYPE, "Spanish");
+    int opColita;
+    do {
+        cout << "\n\t************ COLA DE PROCESOS ************\n";
+        cout << "\t-------------------------------------------";
+        cout << "\n\t[1]. Ingresar nuevo proceso\n";
+        cout << "\t[2]. Ejecutar proceso (desencolar)\n";
+        cout << "\t[3]. Ver cola de procesos\n";
+        cout << "\t[4]. Volver\n";
+        cout << "\t[5]. Salir\n";
+        cout << "\n\tElija una opcion: ";
+        cin >> opColita;
+        cin.ignore();
+
+        switch (opColita) {
+            case 1: {
+                Proceso p;
+                cout << "\n\tIngrese ID\t    : ";
+                cin >> p.id;
+                cout << "\tIngrese nombre\t    : ";
+                cin.ignore();
+                getline(cin, p.nombre);
+                cout << "\tIngrese prioridad   : ";
+                cin >> p.prioridad;
+                cout << "\tIngrese memoria (MB): ";
+                cin >> p.memoria;
+
+                gestor.insertarProceso(p);
+                encolar(frente, final, p);
+                cout << "\t-- Proceso insertado correctamente. --\n";
+                break;
+            }
+            case 2: {
+                if (frente) {
+                    Proceso p = frente->proceso;
+                    desencolar(frente, final);
+                    gestor.eliminarProceso(p.id);
+                    cout << "\tProceso con ID " << p.id << " ejecutado y eliminado.\n";
+                } else {
+                    cout << "\tLa cola est? vac?a.\n";
+                }
+                break;
+            }
+            case 3: {
+                mostrarCola(frente);
+                break;
+            }
+            case 4:
+                cout << "\tEstas volviendo al menu principal...\n";
+                break;
+            case 5:
+                cout << "\tSaliendo del programa...\n";
+                exit(0);
+            default:
+                cout << "\tERROR, Ingrese una opcion v?lida del submenu.\n";
+        }
+    } while (opColita != 4);
+}
+
 void mostrarMenuPrincipal() {
-    cout << "\n===== SISTEMA DE GESTION DE PROCESOS =====\n";
-    cout << "1. Agregar proceso\n";
-    cout << "2. Eliminar proceso\n";
-    cout << "3. Buscar proceso por ID\n";
-    cout << "4. Modificar prioridad\n";
-    cout << "5. Mostrar todos los procesos\n";
-    cout << "6. Guardar procesos en archivo\n";
-    cout << "7. Cargar procesos desde archivo\n";
-    cout << "0. Salir\n";
-    cout << "Seleccione una opción: ";
+    cout << "\n\t===== SISTEMA DE GESTION DE PROCESOS =====\n";
+    cout << "\t1. Agregar proceso\n";
+    cout << "\t2. Eliminar proceso\n";
+    cout << "\t3. Buscar proceso por ID\n";
+    cout << "\t4. Modificar prioridad\n";
+    cout << "\t5. Mostrar todos los procesos\n";
+    cout << "\t6. Guardar procesos en archivo\n";
+    cout << "\t7. Cargar procesos desde archivo\n";
+    cout << "\t8. Cola de procesos\n";
+    cout << "\t0. Salir\n";
+    cout << "\tSeleccione una opción: ";
 }
 
 int main() {
@@ -187,57 +292,58 @@ int main() {
         switch (opcion) {
             case 1: {
                 Proceso p;
-                cout << "Ingrese ID: ";
+                cout << "\tIngrese ID: ";
                 cin >> p.id;
                 cin.ignore();
-                cout << "Ingrese nombre: ";
+                cout << "\tIngrese nombre: ";
                 getline(cin, p.nombre);
-                cout << "Ingrese prioridad: ";
+                cout << "\tIngrese prioridad: ";
                 cin >> p.prioridad;
-                cout << "Ingrese memoria (MB): ";
+                cout << "\tIngrese memoria (MB): ";
                 cin >> p.memoria;
                 cin.ignore();
                 gestor.insertarProceso(p);
-                cout << "Proceso insertado correctamente.\n";
+                encolar(frente, final, p);
+                cout << "\tProceso insertado correctamente.\n";
                 break;
             }
             case 2: {
                 int id;
-                cout << "Ingrese ID del proceso a eliminar: ";
+                cout << "\tIngrese ID del proceso a eliminar: ";
                 cin >> id;
                 cin.ignore();
                 if (gestor.eliminarProceso(id))
-                    cout << "Proceso eliminado correctamente.\n";
+                    cout << "\tProceso eliminado correctamente.\n";
                 else
-                    cout << "No se encontró el proceso.\n";
+                    cout << "\tNo se encontró el proceso.\n";
                 break;
             }
             case 3: {
                 int id;
-                cout << "Ingrese ID del proceso a buscar: ";
+                cout << "\tIngrese ID del proceso a buscar: ";
                 cin >> id;
                 cin.ignore();
                 Proceso* p = gestor.buscarProceso(id);
                 if (p)
-                    cout << "ID: " << p->id
+                    cout << "\t| ID: " << p->id
                          << " | Nombre: " << p->nombre
                          << " | Prioridad: " << p->prioridad
                          << " | Memoria: " << p->memoria << " MB\n";
                 else
-                    cout << "No se encontró el proceso.\n";
+                    cout << "\tNo se encontró el proceso.\n";
                 break;
             }
             case 4: {
                 int id, nuevaPrioridad;
-                cout << "Ingrese ID del proceso a modificar: ";
+                cout << "\tIngrese ID del proceso a modificar: ";
                 cin >> id;
-                cout << "Ingrese nueva prioridad: ";
+                cout << "\tIngrese nueva prioridad: ";
                 cin >> nuevaPrioridad;
                 cin.ignore();
                 if (gestor.modificarPrioridad(id, nuevaPrioridad))
-                    cout << "Prioridad modificada correctamente.\n";
+                    cout << "\tPrioridad modificada correctamente.\n";
                 else
-                    cout << "No se encontró el proceso.\n";
+                    cout << "\tNo se encontró el proceso.\n";
                 break;
             }
             case 5:
@@ -245,27 +351,31 @@ int main() {
                 break;
             case 6: {
                 string nombreArchivo;
-                cout << "Ingrese nombre del archivo para guardar: ";
+                cout << "\tIngrese nombre del archivo para guardar: ";
                 cin.ignore(); // Agregado por seguridad
                 getline(cin, nombreArchivo);
                 gestor.guardarArchivo(nombreArchivo);
-                cout << "Procesos guardados correctamente.\n";
+                cout << "\tProcesos guardados correctamente.\n";
                 break;
             }
             case 7: {
                 string nombreArchivo;
-                cout << "Ingrese nombre del archivo para cargar: ";
+                cout << "\tIngrese nombre del archivo para cargar: ";
                 cin.ignore(); // Agregado por seguridad
                 getline(cin, nombreArchivo);
                 gestor.cargarArchivo(nombreArchivo);
-                cout << "Procesos cargados correctamente.\n";
+                cout << "\tProcesos cargados correctamente.\n";
                 break;
             }
+            case 8: {
+                SubMenuCola(gestor);
+		        break;
+            }
             case 0:
-                cout << "Saliendo del programa...\n";
+                cout << "\tSaliendo del programa...\n";
                 break;
             default:
-                cout << "Opción no válida. Intente de nuevo.\n";
+                cout << "\tOpción no válida. Intente de nuevo.\n";
         }
 
     } while (opcion != 0);
