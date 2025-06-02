@@ -49,16 +49,34 @@ public:
         liberarLista();
     }
 
-    void insertarProceso(Proceso p) {
-        if (buscarNodo(p.id)) {
-            cout << "\tError: Ya existe un proceso con ID " << p.id << ". No se inserto.\n";
-            return;
-        }
-        NodoLista* nuevo = new NodoLista;
-        nuevo->proceso = p;
-        nuevo->siguiente = cabeza;
-        cabeza = nuevo;
-    }
+	Proceso agregarProceso() {
+	    Proceso nuevo;
+	    cout << "\n\tIngrese ID del proceso\t\t: ";
+	    cin >> nuevo.id;
+	    cout << "\tIngrese nombre del proceso\t: ";
+	    cin >> nuevo.nombre;  
+	    cout << "\tIngrese prioridad\t\t: ";
+	    cin >> nuevo.prioridad;
+	    cout << "\tIngrese memoria (en MB)\t: ";
+	    cin >> nuevo.memoria;
+	
+	    NodoLista* nuevoNodo = new NodoLista();
+	    nuevoNodo->proceso = nuevo;
+	    nuevoNodo->siguiente = NULL;
+	
+	    if (cabeza == NULL) {
+	        cabeza = nuevoNodo;
+	    } else {
+	        NodoLista* actual = cabeza;
+	        while (actual->siguiente != NULL) {
+	            actual = actual->siguiente;
+	        }
+	        actual->siguiente = nuevoNodo;
+	    }
+	
+	    cout << "\tProceso agregado exitosamente.\n";
+	    return nuevo;
+	}
 
     bool eliminarProceso(int id) {
         if (!cabeza) return false;
@@ -156,7 +174,7 @@ public:
 
             p.memoria = atoi(linea.c_str());
 
-            insertarProceso(p);
+            agregarProceso();
         }
         archivo.close();
     }
@@ -222,23 +240,12 @@ void SubMenuCola(GestorProceso& gestor) {
         cin.ignore();
 
         switch (opColita) {
-            case 1: {
-                Proceso p;
-                cout << "\n\tIngrese ID\t    : ";
-                cin >> p.id;
-                cout << "\tIngrese nombre\t    : ";
-                cin.ignore();
-                getline(cin, p.nombre);
-                cout << "\tIngrese prioridad   : ";
-                cin >> p.prioridad;
-                cout << "\tIngrese memoria (MB): ";
-                cin >> p.memoria;
-
-                gestor.insertarProceso(p);
-                encolar(frente, final, p);
-                cout << "\t-- Proceso insertado correctamente. --\n";
-                break;
-            }
+			case 1: {
+			    Proceso p = gestor.agregarProceso();
+			    encolar(frente, final, p);
+			    cout << "\tProceso insertado correctamente.\n";
+			    break;
+			}
             case 2: {
                 if (frente) {
                     Proceso p = frente->proceso;
@@ -290,23 +297,11 @@ int main() {
         cin.ignore();
 
         switch (opcion) {
-            case 1: {
-                Proceso p;
-                cout << "\tIngrese ID: ";
-                cin >> p.id;
-                cin.ignore();
-                cout << "\tIngrese nombre: ";
-                getline(cin, p.nombre);
-                cout << "\tIngrese prioridad: ";
-                cin >> p.prioridad;
-                cout << "\tIngrese memoria (MB): ";
-                cin >> p.memoria;
-                cin.ignore();
-                gestor.insertarProceso(p);
-                encolar(frente, final, p);
-                cout << "\tProceso insertado correctamente.\n";
-                break;
-            }
+			case 1: {
+			    Proceso p = gestor.agregarProceso();
+			    // Si quieres, puedes hacer algo con p aquí
+			    break;
+			}
             case 2: {
                 int id;
                 cout << "\tIngrese ID del proceso a eliminar: ";
