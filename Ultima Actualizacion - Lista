@@ -6,7 +6,7 @@ using namespace std;
 //para pila 
 #define MAX_PILA 100         //Tamaño máximo
 int procesos[MAX_PILA];       // almacena los bloques asignados
-int siguiente[MAX_PILA];     // enlaza cada posición con la anterior 
+int siguiente[MAX_PILA];     // enlaza cada posición con la anterior
 int tope = -1;               // índice del tope de la pila
 int libre = 0;               // índice del siguiente espacio libre
 
@@ -32,7 +32,93 @@ struct NodoCola {
 NodoCola* frente = NULL; //decimos que el frente de la cola
 NodoCola* final = NULL; //y el final de la cola están vacios
 
-void encolar(NodoCola*& frente, NodoCola*& final, Proceso p);
+//creamos una funcion encolar con los parametros y referencias que renombraremos dentro
+void encolar(NodoCola*& frente, NodoCola*& final, Proceso p) {
+    NodoCola* nuevo = new NodoCola;
+	nuevo->proceso = p;
+	nuevo->siguiente = NULL;
+
+    if (!final) {
+        frente = final = nuevo;
+    } else {
+        final->siguiente = nuevo;
+        final = nuevo;
+    }
+}
+
+bool desencolar(NodoCola*& frente, NodoCola*& final) {
+    if (!frente) return false;
+    NodoCola* temp = frente;
+    frente = frente->siguiente;
+    if (!frente) final = NULL;
+    delete temp;
+    return true;
+}
+
+void mostrarCola(NodoCola* frente) {
+    if (!frente) {
+        cout << "\tCola vac?a.\n";
+        return;
+    }
+    NodoCola* actual = frente;
+    while (actual) {
+        Proceso p = actual->proceso;
+        cout << "\t| ID: " << p.id << " | Nombre: " << p.nombre
+             << " | Prioridad: " << p.prioridad << " | Memoria: " << p.memoria << "MB\n";
+        actual = actual->siguiente;
+    }
+}
+
+// Funciones para Pila - Dayana
+void asignarProceso() {
+    //Verifica si la pila ha alcanzado su capacidad máxima
+    if (libre >= MAX_PILA) {
+        cout << "\tError: Pila llena\n";
+    } else {
+        int idProceso;
+        cout << "\tID del bloque: ";
+        cin >> idProceso;
+
+        procesos[libre] = idProceso;     // Guarda el ID en el arreglo de bloques
+        siguiente[libre] = tope;       // Enlaza con el bloque anterior (el actual tope)
+        tope = libre;                  // Actualiza el tope al nuevo bloque agregado
+        libre++;                       // Avanza al siguiente espacio libre
+
+        cout << "\tBloque " << idProceso << " asignado correctamente.\n";
+    }
+}
+
+void verTope() {
+    // Verifica si la pila está vacía antes de mostrar el tope
+    if (tope == -1) {
+        cout << "\tError: Pila vacía\n";
+    } else {
+        cout << "\tBloque en tope: " << procesos[tope] << "\n";
+    }
+}
+
+// Funciones para Pila - Yatzuri
+void LiberarProceso() {
+    // Verifica si la pila está vacía antes de liberar
+    if (tope == -1) {
+        cout << "\tError: Pila vacía\n";
+    } else {
+        // Muestra el bloque que será liberado (actual tope)
+        cout << "\tLiberando bloque: " << procesos[tope] << "\n";
+
+        // Actualiza el tope al anterior bloque (retrocede en la pila)
+        tope = siguiente[tope];
+    }
+}
+
+void VerificarVacia() {
+    // Verifica si la pila está vacía (tope == -1)
+    if (tope == -1) {
+        cout << "\tVerdadero (vacía)\n";
+    } else {
+        cout << "\tFalso (con datos)\n";
+    }
+}
 
 class GestorProceso {
 private:
@@ -220,94 +306,6 @@ public:
         archivo.close();
     }
 };
-
-//creamos una funcion encolar con los parametros y referencias que renombraremos dentro
-void encolar(NodoCola*& frente, NodoCola*& final, Proceso p) {
-    NodoCola* nuevo = new NodoCola;
-	nuevo->proceso = p;
-	nuevo->siguiente = NULL;
-
-    if (!final) {
-        frente = final = nuevo;
-    } else {
-        final->siguiente = nuevo;
-        final = nuevo;
-    }
-}
-
-bool desencolar(NodoCola*& frente, NodoCola*& final) {
-    if (!frente) return false;
-    NodoCola* temp = frente;
-    frente = frente->siguiente;
-    if (!frente) final = NULL;
-    delete temp;
-    return true;
-}
-
-void mostrarCola(NodoCola* frente) {
-    if (!frente) {
-        cout << "\tCola vac?a.\n";
-        return;
-    }
-    NodoCola* actual = frente;
-    while (actual) {
-        Proceso p = actual->proceso;
-        cout << "\t| ID: " << p.id << " | Nombre: " << p.nombre
-             << " | Prioridad: " << p.prioridad << " | Memoria: " << p.memoria << "MB\n";
-        actual = actual->siguiente;
-    }
-}
-
-// Funciones para Pila - Dayana
-void asignarProceso() {
-    //Verifica si la pila ha alcanzado su capacidad máxima
-    if (libre >= MAX_PILA) {
-        cout << "\tError: Pila llena\n";
-    } else {
-        int idProceso;
-        cout << "\tID del bloque: ";
-        cin >> idProceso;
-
-        procesos[libre] = idProceso;     // Guarda el ID en el arreglo de bloques
-        siguiente[libre] = tope;       // Enlaza con el bloque anterior (el actual tope)
-        tope = libre;                  // Actualiza el tope al nuevo bloque agregado
-        libre++;                       // Avanza al siguiente espacio libre
-
-        cout << "\tBloque " << idProceso << " asignado correctamente.\n";
-    }
-}
-
-void verTope() {
-    // Verifica si la pila está vacía antes de mostrar el tope
-    if (tope == -1) {
-        cout << "\tError: Pila vacía\n";
-    } else {
-        cout << "\tBloque en tope: " << procesos[tope] << "\n";
-    }
-}
-
-// Funciones para Pila - Yatzuri
-void LiberarProceso() {
-    // Verifica si la pila está vacía antes de liberar
-    if (tope == -1) {
-        cout << "\tError: Pila vacía\n";
-    } else {
-        // Muestra el bloque que será liberado (actual tope)
-        cout << "\tLiberando bloque: " << procesos[tope] << "\n";
-
-        // Actualiza el tope al anterior bloque (retrocede en la pila)
-        tope = siguiente[tope];
-    }
-}
-
-void VerificarVacia() {
-    // Verifica si la pila está vacía (tope == -1)
-    if (tope == -1) {
-        cout << "\tVerdadero (vacía)\n";
-    } else {
-        cout << "\tFalso (con datos)\n";
-    }
-}
 
 //Funcion de SubMenu cola cuando el usuario ingrese la opcion 8
 void SubMenuCola(GestorProceso& gestor) {
