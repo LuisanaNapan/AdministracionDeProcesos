@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <cstdlib> // Para NULL
 #include <limits> //para validar el número entero (Luisana)
 using namespace std;
 //para pila 
