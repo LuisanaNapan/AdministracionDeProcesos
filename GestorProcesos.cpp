@@ -151,26 +151,34 @@ public:
 
     void cargarArchivo(const string& nombreArchivo) {
         ifstream archivo(nombreArchivo.c_str());
+        if (!archivo) {
+            cout << "\tError al abrir el archivo para cargar.\n";
+            return;
+        }
+        liberarLista();
         string linea;
         while (getline(archivo, linea)) {
             Proceso p;
             size_t pos = 0;
 
             pos = linea.find(',');
-            p.id = stoi(linea.substr(0, pos));
+            if (pos == string::npos) continue;
+            p.id = atoi(linea.substr(0, pos).c_str());
             linea.erase(0, pos + 1);
 
             pos = linea.find(',');
+            if (pos == string::npos) continue;
             p.nombre = linea.substr(0, pos);
             linea.erase(0, pos + 1);
 
             pos = linea.find(',');
-            p.prioridad = stoi(linea.substr(0, pos));
+            if (pos == string::npos) continue;
+            p.prioridad = atoi(linea.substr(0, pos).c_str());
             linea.erase(0, pos + 1);
 
-            p.memoria = stoi(linea);
+            p.memoria = atoi(linea.c_str());
 
-            insertarProceso(p);
+            agregarProceso();
         }
         archivo.close();
     }
