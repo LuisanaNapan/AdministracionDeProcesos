@@ -205,25 +205,50 @@ public:
 	    encolar(frente, final, p);
 	}
 
-    bool eliminarProceso(int id) {
-        if (!cabeza) return false;
-        if (cabeza->proceso.id == id) {
-            NodoLista* temp = cabeza;
-            cabeza = cabeza->siguiente;
-            delete temp;
-            return true;
-        }
-        NodoLista* actual = cabeza;
-        while (actual->siguiente) {
-            if (actual->siguiente->proceso.id == id) {
-                NodoLista* temp = actual->siguiente;
-                actual->siguiente = temp->siguiente;
-                delete temp;
-                return true;
+    // Función para eliminar un proceso de la lista ligada por su ID
+    void eliminarProceso() { //Yatzuri
+        int idEliminar;
+
+        // Solicitar al usuario el ID a eliminar (validar que tenga 3 dígitos)
+        do {
+            cout << "\n\tIngrese ID del proceso a eliminar (100-999): ";
+            cin >> idEliminar;
+            if (idEliminar < 100 || idEliminar > 999) {
+                cout << "\tERROR, el ID debe ser un número de 3 dígitos (100 a 999)\n";
             }
+        } while (idEliminar < 100 || idEliminar > 999);
+
+        // Verificar si la lista está vacía
+        if (cabeza == NULL) {
+            cout << "\tLa lista está vacía. No hay procesos que eliminar.\n";
+            return;
+        }
+
+        // Caso especial: el proceso a eliminar está en la cabeza de la lista
+        if (cabeza->proceso.id == idEliminar) {
+            NodoLista* temp = cabeza;
+            cabeza = cabeza->siguiente; // Avanza la cabeza al siguiente nodo
+            delete temp;                // Libera la memoria del nodo eliminado
+            cout << "\tProceso con ID " << idEliminar << " eliminado correctamente.\n";
+            return;
+        }
+
+        // Buscar el nodo a eliminar recorriendo la lista
+        NodoLista* actual = cabeza;
+        while (actual->siguiente != NULL && actual->siguiente->proceso.id != idEliminar) {
             actual = actual->siguiente;
         }
-        return false;
+
+        // Si se encontró el nodo con el ID
+        if (actual->siguiente != NULL) {
+            NodoLista* temp = actual->siguiente;
+            actual->siguiente = temp->siguiente; // Salta el nodo a eliminar
+            delete temp;
+            cout << "\tProceso con ID " << idEliminar << " eliminado correctamente.\n";
+        } else {
+            // No se encontró el proceso con ese ID
+            cout << "\tNo se encontró ningún proceso con el ID " << idEliminar << ".\n";
+        }
     }
 
     Proceso* buscarProceso(int id) {
