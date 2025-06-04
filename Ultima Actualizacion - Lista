@@ -9,6 +9,7 @@ int procesos[MAX_PILA];   //Almacena los IDs de procesos con memoria asignada
 int siguiente[MAX_PILA];  //enlaza cada posición con la anterior
 int tope = -1;           //Último bloque asignado
 int libre = 0;          //Primer espacio libre disponible
+int memoriaUsada = 0; // Memoria total ocupada actualmente
 
 struct Proceso {
     int id;
@@ -22,6 +23,7 @@ struct NodoLista {
     NodoLista* siguiente;
     NodoLista() : siguiente(NULL) {}
 };
+NodoLista* cabeza = NULL; //puntero al inicio de la lista
 
 //creamos una estructura llamada NodoCola
 struct NodoCola {
@@ -132,23 +134,35 @@ bool eliminarDeColaPorId(NodoCola*& frente, NodoCola*& final, int id) {
 }
 
 // Funciones para Pila - Dayana
-void asignarMemoria(NodoLista* listaProcesos) {
+void asignarMemoria(NodoLista* cabeza) {
     int idBuscado;
-    cout << "\nIngrese el ID del proceso al que desea asignar memoria: ";
+    cout << "\tIngrese el ID del proceso al que desea asignar memoria: ";
     cin >> idBuscado;
     // Busca el proceso en la lista
-    NodoLista* actual = listaProcesos;
+    NodoLista* actual = cabeza;
     while (actual && actual->proceso.id != idBuscado) {
         actual = actual->siguiente;
     }
 
     if (!actual) {
-        cout << "El proceso con ID "<<idBuscado<<" no existe.\n";
+        cout << "\tEl proceso con ID "<<idBuscado<<" no existe.\n";
         return;
     }
 
     if (libre == -1) {
-        cout << "No hay bloques de memoria disponibles.\n";
+        cout << "\tNo hay bloques de memoria disponibles.\n";
+        return;
+    }
+    
+        // Validar memoria disponible
+    if (memoriaUsada + actual->proceso.memoria > MAX_PILA) {
+        cout << "\tNo hay suficiente memoria disponible. Solo quedan " 
+             << (MAX_PILA - memoriaUsada) << " MB.\n";
+        return;
+    }
+
+    if (libre == -1) {
+        cout << "\tNo hay bloques de memoria disponibles.\n";
         return;
     }
 
@@ -160,15 +174,15 @@ void asignarMemoria(NodoLista* listaProcesos) {
     siguiente[nuevoBloque] = tope; // El nuevo bloque apunta al anterior tope
     tope = nuevoBloque;            // El nuevo bloque ahora es el tope
 
-    cout << "Memoria asignada correctamente al proceso " << actual->proceso.nombre << " (ID: " << actual->proceso.id << ").\n";
+    cout << "\tMemoria asignada correctamente al proceso " << actual->proceso.nombre << " (ID: " << actual->proceso.id << ").\n";
 }
 
 void verTope() {
     if (tope == -1) {
-        cout << "La pila de memoria está vacía.\n";
+        cout << "\tLa pila de memoria está vacía.\n";
         return;
     }
-    cout << "El bloque en el tope está asignado al proceso con ID: " << procesos[tope] << "\n";
+    cout << "\tEl bloque en el tope está asignado al proceso con ID: " << procesos[tope] << "\n";
 }
 
 // Funciones para Pila - Yatzuri
@@ -223,6 +237,10 @@ public:
 
     ~GestorProceso() {
         liberarLista();
+    }
+    
+    NodoLista* getCabeza() const {
+        return cabeza;
     }
 	//Función para agregar un nuevo proceso a la lista ligada 
 	void agregarProceso() { //Dayana
@@ -438,7 +456,7 @@ void SubMenuCola(GestorProceso& gestor) {
     } while (opColita != 4);
 }
 
-void SubMenuPila() {
+void SubMenuPila(GestorProceso gestor) {
     int opcion;
     do {
         cout << "\n\t************ PILA DE BLOQUES ************\n";
@@ -450,10 +468,10 @@ void SubMenuPila() {
         cout << "\n\t[5]. Volver\n";
         cout << "\n\tElija una opción: "; 
         cin>>opcion;
-
+        
         switch(opcion) {
-            case 1
-				asignarMemoria(listaProcesos); 
+            case 1:
+				asignarMemoria(gestor.getCabeza());		
 			break;
             case 2: 
 				LiberarProceso(); 
@@ -488,7 +506,6 @@ void mostrarMenuPrincipal() {
 int main() {
     setlocale(LC_CTYPE,"Spanish");
     GestorProceso gestor;
-    NodoLista* listaProcesos=NULL;
     int opcion;
 
     do {
@@ -567,7 +584,7 @@ int main() {
 			break;
             }
             case 9: {
-                SubMenuPila(); 
+                SubMenuPila(gestor); 
 			break;
             }
             case 0:
