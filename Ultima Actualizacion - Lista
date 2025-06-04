@@ -36,7 +36,7 @@ NodoCola* final = NULL; //y el final de la cola están vacios
 
 //creamos una funcion encolar con los parametros y referencias que renombraremos dentro
 void encolar(NodoCola*& frente, NodoCola*& final, Proceso p) {
-    NodoCola* nuevo = new NodoCola;
+    NodoCola* nuevo = new NodoCola; //creamos un puntero y copiaremos los campos de la estructura NodoCola
     nuevo->proceso = p;
     nuevo->siguiente = NULL;
 
