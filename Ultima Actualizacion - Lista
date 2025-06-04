@@ -85,11 +85,11 @@ void encolar(NodoCola*& frente, NodoCola*& final, Proceso p) {
 }
 
 bool desencolar(NodoCola*& frente, NodoCola*& final) {
-    if (!frente) return false;
-    NodoCola* temp = frente;
-    frente = frente->siguiente;
-    if (!frente) final = NULL;
-    delete temp;
+    if (!frente) return false; //si el frente sea igual a NULL, no hay nada que eliminar
+    NodoCola* temp = frente; //creamos un puntero temporal que apuntará al frente de la cola
+    frente = frente->siguiente; // el frente es igual al nodo que sigue y si luego de eso
+    if (!frente) final = NULL; //el frente es NULL entonces el final también lo es
+    delete temp; //Eliminamos el temporal(inicio de la cola)
     return true;
 }
 
@@ -107,28 +107,29 @@ void mostrarCola(NodoCola* frente) {
     }
 }
 
+//eliminar por ID
 bool eliminarDeColaPorId(NodoCola*& frente, NodoCola*& final, int id) {
-    if (!frente) return false;
-    NodoCola* actual = frente;
-    NodoCola* anterior = NULL;
+    if (!frente) return false; //si el frente es NULL no hay para para eliminar
+    NodoCola* actual = frente; //puntero actual apunta al que está al frente
+    NodoCola* anterior = NULL; //anterior es NULL porque apunta al que está antes del frente
 
-    while (actual) {
-        if (actual->proceso.id == id) {
-            if (anterior == NULL) {
-                // Es el frente
-                frente = actual->siguiente;
-                if (!frente) final = NULL;
+    while (actual) { //mientra el puntero actual no sea NULL
+        if (actual->proceso.id == id) { //si el nodo actual es el ID que quieres eliminar
+            if (anterior == NULL) { //y el anterior es NULL y
+                // El frente ahora es el nodo que sigue
+                frente = actual->siguiente; //pero
+                if (!frente) final = NULL; //si el frente es NULL, el final también lo es
             } else {
-                anterior->siguiente = actual->siguiente;
-                if (actual == final) {
-                    final = anterior;
+                anterior->siguiente = actual->siguiente; //el anterior y el actual ahora son el mismo
+                if (actual == final) { //si el actual es igual al final
+                    final = anterior; //el final entonces será igual al anterior
                 }
             }
-            delete actual;
+            delete actual; //eliminamos el actual
             return true;
         }
-        anterior = actual;
-        actual = actual->siguiente;
+        anterior = actual; //el anterior toma el lugar del actual
+        actual = actual->siguiente; //el actual ahora es el nodo que sigue
     }
     return false;
 }
