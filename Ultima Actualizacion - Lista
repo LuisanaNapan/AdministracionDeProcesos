@@ -1,14 +1,14 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <cstdlib> // Para NULL
+#include <cstdlib> //Para NULL
 using namespace std;
 //para pila 
-#define MAX_PILA 100         //Tamaño máximo
-int procesos[MAX_PILA];       // almacena los bloques asignados
-int siguiente[MAX_PILA];     // enlaza cada posición con la anterior
-int tope = -1;               // índice del tope de la pila
-int libre = 0;               // índice del siguiente espacio libre
+#define MAX_PILA 100      //Tamaño máximo
+int procesos[MAX_PILA];   //Almacena los IDs de procesos con memoria asignada
+int siguiente[MAX_PILA];  //enlaza cada posición con la anterior
+int tope = -1;           //Último bloque asignado
+int libre = 0;          //Primer espacio libre disponible
 
 struct Proceso {
     int id;
@@ -132,31 +132,43 @@ bool eliminarDeColaPorId(NodoCola*& frente, NodoCola*& final, int id) {
 }
 
 // Funciones para Pila - Dayana
-void asignarProceso() {
-    //Verifica si la pila ha alcanzado su capacidad máxima
-    if (libre >= MAX_PILA) {
-        cout << "\tError: Pila llena\n";
-    } else {
-        int idProceso;
-        cout << "\tID del bloque: ";
-        cin >> idProceso;
-
-        procesos[libre] = idProceso;     // Guarda el ID en el arreglo de bloques
-        siguiente[libre] = tope;       // Enlaza con el bloque anterior (el actual tope)
-        tope = libre;                  // Actualiza el tope al nuevo bloque agregado
-        libre++;                       // Avanza al siguiente espacio libre
-
-        cout << "\tBloque " << idProceso << " asignado correctamente.\n";
+void asignarMemoria(NodoLista* listaProcesos) {
+    int idBuscado;
+    cout << "\nIngrese el ID del proceso al que desea asignar memoria: ";
+    cin >> idBuscado;
+    // Busca el proceso en la lista
+    NodoLista* actual = listaProcesos;
+    while (actual && actual->proceso.id != idBuscado) {
+        actual = actual->siguiente;
     }
+
+    if (!actual) {
+        cout << "El proceso con ID "<<idBuscado<<" no existe.\n";
+        return;
+    }
+
+    if (libre == -1) {
+        cout << "No hay bloques de memoria disponibles.\n";
+        return;
+    }
+
+    // Asigna el bloque al proceso
+    int nuevoBloque = libre;
+    libre = siguiente[libre]; // Actualiza el siguiente espacio libre
+
+    procesos[nuevoBloque] = actual->proceso.id;
+    siguiente[nuevoBloque] = tope; // El nuevo bloque apunta al anterior tope
+    tope = nuevoBloque;            // El nuevo bloque ahora es el tope
+
+    cout << "Memoria asignada correctamente al proceso " << actual->proceso.nombre << " (ID: " << actual->proceso.id << ").\n";
 }
 
 void verTope() {
-    // Verifica si la pila está vacía antes de mostrar el tope
     if (tope == -1) {
-        cout << "\tError: Pila vacía\n";
-    } else {
-        cout << "\tBloque en tope: " << procesos[tope] << "\n";
+        cout << "La pila de memoria está vacía.\n";
+        return;
     }
+    cout << "El bloque en el tope está asignado al proceso con ID: " << procesos[tope] << "\n";
 }
 
 // Funciones para Pila - Yatzuri
@@ -440,8 +452,8 @@ void SubMenuPila() {
         cin>>opcion;
 
         switch(opcion) {
-            case 1: 
-				asignarProceso(); 
+            case 1
+				asignarMemoria(listaProcesos); 
 			break;
             case 2: 
 				LiberarProceso(); 
@@ -476,6 +488,7 @@ void mostrarMenuPrincipal() {
 int main() {
     setlocale(LC_CTYPE,"Spanish");
     GestorProceso gestor;
+    NodoLista* listaProcesos=NULL;
     int opcion;
 
     do {
