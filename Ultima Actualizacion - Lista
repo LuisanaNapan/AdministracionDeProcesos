@@ -474,6 +474,7 @@ void mostrarMenuPrincipal() {
 }
 
 int main() {
+    setlocale(LC_CTYPE,"Spanish");
     GestorProceso gestor;
     int opcion;
 
