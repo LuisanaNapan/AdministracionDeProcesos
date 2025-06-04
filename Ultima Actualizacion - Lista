@@ -321,90 +321,97 @@ public:
         }
         return false;
     }
-
-    Proceso* buscarProceso(int id) {
-        NodoLista* nodo = buscarNodo(id);
-        return nodo ? &(nodo->proceso) : NULL;
+// Función que busca un proceso por su ID y retorna un puntero al proceso si lo encuentra
+    Proceso* buscarProceso(int id) { 
+        NodoLista* nodo = buscarNodo(id); // Busca el nodo que contiene el proceso con ese ID
+        return nodo ? &(nodo->proceso) : NULL; // Si lo encuentra, retorna dirección del proceso; si no, retorna NULL
     }
-
+// Función que modifica la prioridad de un proceso identificado por su ID
     bool modificarPrioridad(int id, int nuevaPrioridad) {
-        NodoLista* nodo = buscarNodo(id);
+        NodoLista* nodo = buscarNodo(id);  // Busca el nodo correspondiente al ID dado
         if (nodo) {
-            nodo->proceso.prioridad = nuevaPrioridad;
+            nodo->proceso.prioridad = nuevaPrioridad; // Actualiza la prioridad del proceso
 
-	    //Actualiza en la cola: eliminar y volver a encolar para reordenar
-            eliminarDeColaPorId(frente, final, id);
-            encolar(frente, final, nodo->proceso);
+ // Para mantener la cola de prioridad actualizada,
+// se elimina el proceso de la cola y se vuelve a insertar (reencolar)
+            eliminarDeColaPorId(frente, final, id); // Elimina el proceso antiguo de la cola
+            encolar(frente, final, nodo->proceso); // Vuelve a encolarlo con la nueva prioridad
 
-            return true;
+            return true;  // Operación exitosa
         }
-        return false;
+        return false; // No se encontró el proceso con ese ID
     }
-
+// Función que muestra todos los procesos registrados en la lista enlazada
     void mostrarProcesos() {
-        if (!cabeza) {
+        if (!cabeza) { // Verifica si la lista está vacía
             cout << "\tNo hay procesos para mostrar.\n";
             return;
         }
-        NodoLista* actual = cabeza;
+        NodoLista* actual = cabeza; // Puntero auxiliar para recorrer la lista desde la cabeza
         while (actual) {
-            cout << "\t| ID: " << actual->proceso.id
-                 << " | Nombre: " << actual->proceso.nombre
-                 << " | Prioridad: " << actual->proceso.prioridad
-                 << " | Memoria: " << actual->proceso.memoria << " MB\n";
-            actual = actual->siguiente;
+            cout << "\t| ID: " << actual->proceso.id  // Muestra el ID del proceso
+                 << " | Nombre: " << actual->proceso.nombre // Muestra el nombre
+                 << " | Prioridad: " << actual->proceso.prioridad  // Muestra la prioridad
+                 << " | Memoria: " << actual->proceso.memoria << " MB\n"; // Muestra la memoria
+            actual = actual->siguiente; // Avanza al siguiente nodo de la lista
         }
     }
-
+// Función para guardar los procesos de la lista en un archivo de texto
     void guardarArchivo(const string& nombreArchivo) {
         ofstream archivo(nombreArchivo.c_str());
+// Se abre el archivo en modo escritura
         if (!archivo) {
             cout << "Error al abrir el archivo para guardar.\n";
             return;
         }
+ // Se inicia desde el principio de la lista
         NodoLista* actual = cabeza;
+// Se recorre la lista enlazada y se escriben los datos de cada proceso en el archivo
         while (actual) {
-            archivo << actual->proceso.id << ","
-                    << actual->proceso.nombre << ","
-                    << actual->proceso.prioridad << ","
-                    << actual->proceso.memoria << "\n";
-            actual = actual->siguiente;
+            archivo << actual->proceso.id << ","       // Escribe el ID del proceso
+                    << actual->proceso.nombre << ","   // Escribe el nombre del proceso
+                    << actual->proceso.prioridad << "," // Escribe la prioridad del proceso
+                    << actual->proceso.memoria << "\n"; // Escribe la memoria del proceso y salta de línea
+            actual = actual->siguiente;  // Avanza al siguiente nodo
         }
-        archivo.close();
+        archivo.close();  // Cierra el archivo después de escribir
     }
-
-    void cargarArchivo(const string& nombreArchivo) {
+// Función para cargar los procesos desde un archivo de texto a la lista enlazada
+   void cargarArchivo(const string& nombreArchivo) {
+ // Se abre el archivo en modo lectura
         ifstream archivo(nombreArchivo.c_str());
+ // Si no se pudo abrir el archivo, se muestra un mensaje de error
         if (!archivo) {
             cout << "\tError al abrir el archivo para cargar.\n";
             return;
         }
-        liberarLista();
-        string linea;
+        liberarLista(); // Se limpia la lista actual antes de cargar nuevos datos
+        string linea; // Variable para guardar cada línea del archivo
+ // Se lee el archivo línea por línea
         while (getline(archivo, linea)) {
-            Proceso p;
+            Proceso p; // Estructura donde se almacenará cada proceso
             size_t pos = 0;
-
+ // Extraer el ID del proceso
             pos = linea.find(',');
-            if (pos == string::npos) continue;
-            p.id = atoi(linea.substr(0, pos).c_str());
-            linea.erase(0, pos + 1);
-
+            if (pos == string::npos) continue; // Si no se encuentra una coma, se omite la línea
+            p.id = atoi(linea.substr(0, pos).c_str());  // Convierte el texto en entero
+            linea.erase(0, pos + 1); // Elimina la parte ya leída
+ // Extraer el nombre del proceso
             pos = linea.find(',');
-            if (pos == string::npos) continue;
+            if (pos == string::npos) continue; // Guarda el nombre
             p.nombre = linea.substr(0, pos);
             linea.erase(0, pos + 1);
-
+ // Extraer la prioridad del proceso
             pos = linea.find(',');
             if (pos == string::npos) continue;
             p.prioridad = atoi(linea.substr(0, pos).c_str());
             linea.erase(0, pos + 1);
-
+ // Extraer la memoria del proceso (lo que queda)
             p.memoria = atoi(linea.c_str());
-
+ // Agrega el proceso a la lista enlazada
             agregarProceso();
         }
-        archivo.close();
+        archivo.close(); ; // Cierra el archivo después de leer
     }
 };
 
