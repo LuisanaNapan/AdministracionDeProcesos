@@ -226,37 +226,34 @@ void liberarMemoria(NodoLista* cabeza) {
 }
 
 void VerificarVacia() {
-    // Verifica si la pila está vacía (tope == -1)
+    // Verifica si la pila de memoria está vacía
     if (tope == -1) {
         cout << "\tVerdadero (vacía)\n";
     } else {
         cout << "\tFalso (con datos). Estado de la memoria:\n";
-        
-        // 1. Mostrar memoria usada y disponible
-        cout << "\t- Memoria usada: " << memoriaUsada << " MB\n";
-        cout << "\t- Memoria disponible: " << (MAX_PILA - memoriaUsada) << " MB\n";
-        
-        // 2. Mostrar bloques asignados (procesos en la pila)
+        cout << "\t- Memoria usada: " << memoriaUsada << " MB\n";// Muestra la cantidad total de memoria actualmente en uso (en MB)
+        cout << "\t- Memoria disponible: " << (MAX_PILA - memoriaUsada) << " MB\n";// Calcula y muestra la memoria disponible
         cout << "\t- Procesos en memoria (del más reciente al más antiguo):\n";
-        int actual = tope;
-        int contador = 0;
         
-        while (actual != -1) {
+        int actual = tope;// Inicia desde el tope de la pila (bloque más reciente)
+        int contador = 0;// Contador para llevar registro de bloques asignados
+        
+        while (actual != -1) {// Recorre la pila mientras haya bloques asignados (actual != -1)
             cout << "\t  Bloque " << actual << ": Proceso ID " << procesos[actual] << "\n";
-            actual = siguiente[actual];
-            contador++;
+            actual = siguiente[actual];// Avanza al bloque anterior en la pila (usando el arreglo siguiente[])
+            contador++;// Incrementa el contador de bloques asignados
         }
         cout << "\t- Total de bloques asignados: " << contador << "\n";
-        
-        // 3. Mostrar bloques libres
         cout << "\t- Bloques libres: ";
-        if (libre == -1) {
+        
+        if (libre == -1) {// Verifica si hay bloques libres (libre == -1 indica que no hay)
             cout << "No hay bloques libres\n";
         } else {
-            int temp = libre;
+            
+            int temp = libre;// Si hay bloques libres, comienza desde el primero (índice libre)
             while (temp != -1) {
-                cout << temp << " ";
-                temp = siguiente[temp];
+                cout << temp << " ";// Muestra el número del bloque libre
+                temp = siguiente[temp];// Avanza al siguiente bloque libre usando el arreglo siguiente[]
             }
             cout << "\n";
         }
@@ -521,7 +518,7 @@ void SubMenuCola(GestorProceso& gestor) {
 void SubMenuPila(GestorProceso gestor) {
     int opcion;
     do {
-        cout << "\n\t************ PILA DE BLOQUES ************\n";
+        cout << "\n\t************ PILA DE MEMORIA ************\n";
         cout << "\t-------------------------------------------";
         cout << "\n\t[1]. Asignar Memoria";
         cout << "\n\t[2]. Liberar Memoria";
@@ -560,7 +557,7 @@ void mostrarMenuPrincipal() {
     cout << "\t[6]. Guardar procesos en archivo\n";
     cout << "\t[7]. Cargar procesos desde archivo\n";
     cout << "\t[8]. Cola de procesos\n"; //agregamos la opción 8 en el menú principal para que sea visible por el usuario.
-    cout << "\t[9]. Pila de bloques\n"; // opcion para pila (Dayana y Yatzuri)
+    cout << "\t[9]. Pila de Memoria\n"; // opcion para pila (Dayana y Yatzuri)
     cout << "\t[0]. Salir\n";
     cout << "\tSeleccione una opción: ";
 }
