@@ -175,6 +175,8 @@ void asignarMemoria(NodoLista* cabeza) {
     siguiente[nuevoBloque] = tope; // El nuevo bloque apunta al anterior tope
     tope = nuevoBloque;            // El nuevo bloque ahora es el tope
 
+    memoriaUsada += actual->proceso.memoria;      // Suma la memoria del proceso a la memoria total usada
+
     cout << "\tMemoria asignada correctamente al proceso " << actual->proceso.nombre << " (ID: " << actual->proceso.id << ").\n";
 }
 
@@ -505,7 +507,7 @@ void SubMenuPila(GestorProceso gestor) {
 				asignarMemoria(gestor.getCabeza());		
 			break;
             case 2: 
-				LiberarMemoria(gestor.getCabeza()); 
+				liberarMemoria(gestor.getCabeza()); 
 			break;
             case 3: 
 				verTope(); 
