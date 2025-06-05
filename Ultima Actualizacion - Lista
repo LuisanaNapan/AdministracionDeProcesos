@@ -230,7 +230,36 @@ void VerificarVacia() {
     if (tope == -1) {
         cout << "\tVerdadero (vacía)\n";
     } else {
-        cout << "\tFalso (con datos)\n";
+        cout << "\tFalso (con datos). Estado de la memoria:\n";
+        
+        // 1. Mostrar memoria usada y disponible
+        cout << "\t- Memoria usada: " << memoriaUsada << " MB\n";
+        cout << "\t- Memoria disponible: " << (MAX_PILA - memoriaUsada) << " MB\n";
+        
+        // 2. Mostrar bloques asignados (procesos en la pila)
+        cout << "\t- Procesos en memoria (del más reciente al más antiguo):\n";
+        int actual = tope;
+        int contador = 0;
+        
+        while (actual != -1) {
+            cout << "\t  Bloque " << actual << ": Proceso ID " << procesos[actual] << "\n";
+            actual = siguiente[actual];
+            contador++;
+        }
+        cout << "\t- Total de bloques asignados: " << contador << "\n";
+        
+        // 3. Mostrar bloques libres
+        cout << "\t- Bloques libres: ";
+        if (libre == -1) {
+            cout << "No hay bloques libres\n";
+        } else {
+            int temp = libre;
+            while (temp != -1) {
+                cout << temp << " ";
+                temp = siguiente[temp];
+            }
+            cout << "\n";
+        }
     }
 }
 
