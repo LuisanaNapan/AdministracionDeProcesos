@@ -95,7 +95,7 @@ bool desencolar(NodoCola*& frente, NodoCola*& final) {
 
 void mostrarCola(NodoCola* frente) {
     if (!frente) {
-        cout << "\tCola vac?a.\n";
+        cout << "\tCola vacía.\n";
         return;
     }
     NodoCola* actual = frente;
@@ -187,17 +187,31 @@ void verTope() {
 }
 
 // Funciones para Pila - Yatzuri
-void LiberarProceso() {
-    // Verifica si la pila está vacía antes de liberar
+void LiberarMemoria(NodoLista* cabeza) {
     if (tope == -1) {
         cout << "\tError: Pila vacía\n";
-    } else {
-        // Muestra el bloque que será liberado (actual tope)
-        cout << "\tLiberando bloque: " << procesos[tope] << "\n";
-
-        // Actualiza el tope al anterior bloque (retrocede en la pila)
-        tope = siguiente[tope];
+        return;
     }
+
+    int id = procesos[tope];
+
+    // Buscar el proceso en la lista para saber cuánta memoria liberar
+    NodoLista* actual = cabeza;
+    while (actual && actual->proceso.id != id) {
+        actual = actual->siguiente;
+    }
+
+    if (actual) {
+        memoriaUsada -= actual->proceso.memoria; // ⬅ Restar memoria
+    }
+
+    cout << "\tLiberando bloque del proceso con ID: " << id << "\n";
+
+    // Liberar el bloque
+    int bloqueLiberado = tope;
+    tope = siguiente[tope];
+    siguiente[bloqueLiberado] = libre;
+    libre = bloqueLiberado;
 }
 
 void VerificarVacia() {
@@ -482,7 +496,7 @@ void SubMenuPila(GestorProceso gestor) {
 				asignarMemoria(gestor.getCabeza());		
 			break;
             case 2: 
-				LiberarProceso(); 
+				LiberarMemoria(); 
 			break;
             case 3: 
 				verTope(); 
