@@ -189,6 +189,7 @@ void verTope() {
 }
 
 // Función para liberar memoria asignada a un proceso en la pila - Yatzuri
+// Función para liberar memoria asignada a un proceso en la pila - Yatzuri
 void liberarMemoria(NodoLista* cabeza) {
     // Verifica si la pila está vacía antes de liberar
     if (tope == -1) {
@@ -199,6 +200,45 @@ void liberarMemoria(NodoLista* cabeza) {
     int idLiberar;
     cout << "\tIngrese el ID del proceso cuya memoria desea liberar: ";
     cin >> idLiberar;
+
+    // Verificar primero si está en el tope (comportamiento LIFO normal)
+    if (procesos[tope] == idLiberar) {
+        // Buscar el proceso en la lista para saber cuánta memoria liberar
+        NodoLista* nodoProceso = cabeza;
+        while (nodoProceso && nodoProceso->proceso.id != idLiberar) {
+            nodoProceso = nodoProceso->siguiente;
+        }
+
+        if (!nodoProceso) {
+            cout << "\tError: no se encontró el proceso en la lista (ID: " << idLiberar << ").\n";
+            return;
+        }
+
+        // Restar la memoria liberada del total usado
+        memoriaUsada -= nodoProceso->proceso.memoria;
+
+        // Muestra el proceso liberado
+        cout << "\tLiberando memoria del proceso: " << nodoProceso->proceso.nombre 
+             << " (ID: " << idLiberar << ", " 
+             << nodoProceso->proceso.memoria << " MB).\n";
+
+        // Liberar el bloque del tope
+        int bloqueLiberado = tope;
+        tope = siguiente[tope];           // Retrocede en la pila
+        siguiente[bloqueLiberado] = libre; // Conecta el bloque liberado a la lista de libres
+        libre = bloqueLiberado;           // Ese bloque ahora está disponible
+        return;
+    }
+
+    // Si no está en el tope, preguntar si quiere forzar la liberación
+    char opcion;
+    cout << "\tEl proceso no está en el tope. ¿Desea liberarlo de todas formas? (s/n): ";
+    cin >> opcion;
+
+    if (opcion != 's' && opcion != 'S') {
+        cout << "\tOperación cancelada. Solo puede liberar el proceso en el tope (LIFO).\n";
+        return;
+    }
 
     // Buscar el proceso en la pila
     int actual = tope;
@@ -241,11 +281,11 @@ void liberarMemoria(NodoLista* cabeza) {
 
     // Liberar el bloque: actualizar los punteros y manejar la lista de espacios libres
     if (anterior == -1) {
-        // Caso cuando el proceso está en el tope
+        // Caso cuando el proceso está en el tope (no debería pasar aquí)
         int bloqueLiberado = tope;
-        tope = siguiente[tope];           // Retrocede en la pila
-        siguiente[bloqueLiberado] = libre; // Conecta el bloque liberado a la lista de libres
-        libre = bloqueLiberado;           // Ese bloque ahora está disponible
+        tope = siguiente[tope];
+        siguiente[bloqueLiberado] = libre;
+        libre = bloqueLiberado;
     } else {
         // Caso cuando el proceso está en medio de la pila
         siguiente[anterior] = siguiente[actual]; // Salta el bloque a liberar
