@@ -186,32 +186,41 @@ void verTope() {
     cout << "\tEl bloque en el tope está asignado al proceso con ID: " << procesos[tope] << "\n";
 }
 
-// Funciones para Pila - Yatzuri
-void LiberarMemoria(NodoLista* cabeza) {
+// Función para liberar memoria asignada a un proceso en la pila - Yatzuri
+void liberarMemoria(NodoLista* cabeza) {
+    // Verifica si la pila está vacía antes de liberar
     if (tope == -1) {
-        cout << "\tError: Pila vacía\n";
+        cout << "\tError: la pila de memoria está vacía. No hay nada que liberar.\n";
         return;
     }
 
-    int id = procesos[tope];
+    // Obtener el ID del proceso que está en el tope de la pila
+    int idLiberado = procesos[tope];
 
     // Buscar el proceso en la lista para saber cuánta memoria liberar
     NodoLista* actual = cabeza;
-    while (actual && actual->proceso.id != id) {
+    while (actual && actual->proceso.id != idLiberado) {
         actual = actual->siguiente;
     }
 
-    if (actual) {
-        memoriaUsada -= actual->proceso.memoria; // ⬅ Restar memoria
+    if (!actual) {
+        cout << "\tError: no se encontró el proceso en la lista (ID: " << idLiberado << ").\n";
+        return;
     }
 
-    cout << "\tLiberando bloque del proceso con ID: " << id << "\n";
+    // Restar la memoria liberada del total usado
+    memoriaUsada -= actual->proceso.memoria;
 
-    // Liberar el bloque
+    // Muestra el proceso liberado
+    cout << "\tLiberando memoria del proceso: " << actual->proceso.nombre 
+         << " (ID: " << idLiberado << ", " 
+         << actual->proceso.memoria << " MB).\n";
+
+    // Liberar el bloque: actualizar el tope y manejar la lista de espacios libres
     int bloqueLiberado = tope;
-    tope = siguiente[tope];
-    siguiente[bloqueLiberado] = libre;
-    libre = bloqueLiberado;
+    tope = siguiente[tope];           // Retrocede en la pila
+    siguiente[bloqueLiberado] = libre; // Conecta el bloque liberado a la lista de libres
+    libre = bloqueLiberado;           // Ese bloque ahora está disponible
 }
 
 void VerificarVacia() {
@@ -483,8 +492,8 @@ void SubMenuPila(GestorProceso gestor) {
     do {
         cout << "\n\t************ PILA DE BLOQUES ************\n";
         cout << "\t-------------------------------------------";
-        cout << "\n\t[1]. Asignar Proceso";
-        cout << "\n\t[2]. Liberar Proceso";
+        cout << "\n\t[1]. Asignar Memoria";
+        cout << "\n\t[2]. Liberar Memoria";
         cout << "\n\t[3]. Ver tope";
         cout << "\n\t[4]. Verificar Vacía";
         cout << "\n\t[5]. Volver\n";
@@ -496,7 +505,7 @@ void SubMenuPila(GestorProceso gestor) {
 				asignarMemoria(gestor.getCabeza());		
 			break;
             case 2: 
-				LiberarMemoria(); 
+				LiberarMemoria(gestor.getCabeza()); 
 			break;
             case 3: 
 				verTope(); 
